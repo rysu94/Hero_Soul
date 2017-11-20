@@ -8,7 +8,10 @@ using UnityEngine;
 Hero Project Level Creator
 By: Ryan Su
 
-This scripts generates the grid which stores the rooms on a level
+This scripts generates the grid which stores the rooms on a level. 
+Algorithm will first generate the "critical path", which is dictated
+by the Level Class, and then generate branches leading to special
+rooms.
 
 */
 
