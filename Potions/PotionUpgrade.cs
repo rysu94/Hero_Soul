@@ -15,14 +15,12 @@ public class PotionUpgrade : MonoBehaviour
 
     public bool unlocked = false;
 
-
     void Update()
     {
-        UpdateCosts();
-
+        //UpdateCosts();
     }
 
-    void UpdateCosts()
+    public void UpdateCosts()
     {
         //update the tooltip
         switch (upgradeID)
@@ -32,19 +30,21 @@ public class PotionUpgrade : MonoBehaviour
                 break;
             //Heal Potency
             case 1:
-                tooltip = "Increase healing potion potency to " + (PotionController.healthPotionAmount + 50);
+                tooltip = "Increase healing potion potency to <color=yellow>" + (PotionController.healthPotionAmount + 50) + "</color>";
                 if(PotionController.healthPotionAmount > 300)
                 {
                     tooltip = "Max Level";
                 }
+                GenerateMaterials(upgradeID, PotionController.healthPotionAmount);
                 break;
             //heal quantity
             case 2:
-                tooltip = "Increase healing potion capacity to " + (PotionController.healthPotionMax + 1);
+                tooltip = "Increase healing potion capacity to <color=yellow>" + (PotionController.healthPotionMax + 1) + "</color>";
                 if(PotionController.healthPotionMax > 10)
                 {
                     tooltip = "Max Level";
                 }
+                GenerateMaterials(upgradeID, PotionController.healthPotionMax);
                 break;
             //mana potency
             case 3:
@@ -145,4 +145,44 @@ public class PotionUpgrade : MonoBehaviour
 
         }
     }
+
+    void GenerateMaterials(int id, int amount)
+    {  
+        int[] mat = new int[8];
+        switch (id)
+        {
+            default:
+                break;
+            case 1:
+                int level = amount / 50;
+                mat = PotionDatabase.healthPot[level - 1];  
+                break;
+            case 2:
+                mat = PotionDatabase.healthQuant[amount - 3];
+                break;
+                
+        }
+
+        foreach (GameObject material in GameObject.FindGameObjectsWithTag("Alc_Mat"))
+        {
+            Destroy(material);
+        }
+
+        for (int i = 0; i < mat.Length; i+=2)
+        {
+            GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Inventory/PotionMaterial"), potionCostPanel.transform);
+            tempObj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Item/" + potionCostPanel.GetComponent<ItemDatabase>().FindItem(mat[i]).itemIconName);
+            if(mat[i + 1] > 0)
+            {
+                tempObj.transform.Find("QuantText").GetComponent<Text>().text = mat[i + 1].ToString();
+            }
+            else
+            {
+                tempObj.transform.Find("QuantText").GetComponent<Text>().text = "";
+            }
+            
+        }
+    }
+
+
 }

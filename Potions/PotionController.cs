@@ -65,6 +65,8 @@ public class PotionController : MonoBehaviour
     //Checks if player is hovering over a button
     public static bool hoverPotion;
 
+    public bool pressed = false;
+
     void Awake()
     {
         if(!init)
@@ -84,27 +86,27 @@ public class PotionController : MonoBehaviour
             manaPotionMax = 1;
 
             //stam potion
-            staminaPotionAmount = 0;
+            staminaPotionAmount = 50;
             staminaPotionCurrent = 0;
             staminaPotionMax = 0;
 
             //stone potion
-            stonePotionAmount = 0;
+            stonePotionAmount = 1;
             stonePotionCurrent = 0;
             stonePotionMax = 0;
 
             //strength potion
-            strengthPotionAmount = 0;
+            strengthPotionAmount = 1;
             strengthPotionCurrent = 0;
             strengthPotionMax = 0;
 
             //alacrity potion
-            alacrityPotionAmount = 0;
+            alacrityPotionAmount = 1;
             alacrityPotionCurrent = 0;
             alacrityPotionMax = 0;
 
             //intellect potion
-            intellectPotionAmount = 0;
+            intellectPotionAmount = 1;
             intellectPotionCurrent = 0;
             intellectPotionMax = 0;
 
@@ -129,7 +131,7 @@ public class PotionController : MonoBehaviour
         RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
 
         //Check if mouse is over the button
-        if(hit.collider != null && (hit.collider.tag == "Heal_Potion" || hit.collider.tag == "Mana_Potion"))
+        if(hit.collider != null && (hit.collider.tag == "Heal_Potion" || hit.collider.tag == "Mana_Potion" || hit.collider.tag == "HUD_Button"))
         {
             hoverPotion = true;
         }
@@ -156,17 +158,27 @@ public class PotionController : MonoBehaviour
         {
             UsePotion1(slot1Active);
         }
+        else if(InputManager.Y_Button() && !InventoryController.inInv && !TestCharController.inTreasure)
+        {
+            UsePotion1(slot1Active);
+        }
         //Potion Slot 2
         else if(Input.GetKeyDown(KeyCode.R))
         {
             UsePotion2(slot2Active);
+        }
+        else if(InputManager.X_Button() && !InventoryController.inInv && !TestCharController.inTreasure)
+        {
+            UsePotion2(slot2Active);
         }	
+
 	}
 
     //Heals Player
     void HealPlayer()
     {
-        PlayerStats.health += healthPotionAmount;
+
+        PlayerStats.health += (int)(PlayerStats.maxHealth * .3f);
         if(PlayerStats.health > PlayerStats.maxHealth)
         {
             PlayerStats.health = PlayerStats.maxHealth;

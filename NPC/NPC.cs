@@ -12,6 +12,7 @@ public class NPC: MonoBehaviour
     public int defaultPos;
 
     public string NPC_ID;
+    public string gender;
 
     public GameObject dialogue;
     public GameObject dialogueImg;
@@ -23,8 +24,8 @@ public class NPC: MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-
-	}
+        ReturnPlayer();
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -49,19 +50,23 @@ public class NPC: MonoBehaviour
 
         if (angle <= 45 || angle >= 315)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Right_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Idle_B");
         }
         else if(angle > 45 && angle< 135)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Up_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Idle_B");
         }
         else if(angle >= 135 && angle <= 225)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Left_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Idle_B");
         }
         else if (angle > 225 && angle< 315)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Down_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Idle_B");
         }
         
     }
@@ -70,19 +75,55 @@ public class NPC: MonoBehaviour
     {
         if (defaultPos == 1)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Up_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Idle_B");
         }
         else if (defaultPos == 2)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Down_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Idle_B");
         }
         else if (defaultPos == 3)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Left_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Idle_B");
         }
         else if (defaultPos == 4)
         {
-            GetComponent<Animator>().Play("M" + NPC_ID + "_NPC_Right_Idle");
+            GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Idle");
+            transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Idle_B");
+        }
+    }
+
+    public void Move()
+    {
+        if (move)
+        {
+            switch (defaultPos)
+            {
+                default:
+                    break;
+                case 1:
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(0, .2f);
+                    GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Walk");
+                    transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Up_Walk_B");
+                    break;
+                case 2:
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(0, -.2f);
+                    GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Walk");
+                    transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Down_Walk_B");
+                    break;
+                case 3:
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(-.2f, 0);
+                    GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Walk");
+                    transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Left_Walk_B");
+                    break;
+                case 4:
+                    GetComponent<Rigidbody2D>().velocity = new Vector2(.2f, 0);
+                    GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Walk");
+                    transform.Find("Bottom").GetComponent<Animator>().Play(gender + NPC_ID + "_NPC_Right_Walk_B");
+                    break;
+            }
         }
     }
 }

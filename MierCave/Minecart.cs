@@ -25,7 +25,7 @@ public class Minecart : MonoBehaviour
         {
             if (!TestCharController.invuln)
             {
-                TestCharController.player.GetComponent<SpriteRenderer>().color = new Color(1f, redValue, redValue);
+                //TestCharController.player.GetComponent<SpriteRenderer>().color = new Color(1f, redValue, redValue);
                 StartCoroutine("ColorReturnRoutinePlayer");
             }
 
@@ -50,11 +50,6 @@ public class Minecart : MonoBehaviour
     //This coroutine executes a player slide when contacting an enemy
     IEnumerator PlayerSlideRoutine()
     {
-        isPlayerSliding = true;
-
-        //This flag prevents players from moving when they are getting hit
-        TestCharController.isHit = true;
-
         //Determines the vector for the player to get knocked back
         var direction = (TestCharController.player.transform.position - transform.position).normalized;
 
@@ -70,12 +65,7 @@ public class Minecart : MonoBehaviour
             TestCharController.playerAttack.clip = TestCharController.hurtNoise[Random.Range(0, TestCharController.hurtNoise.Length)];
             TestCharController.playerAttack.Play();
         }
-
-        yield return new WaitForSeconds(.15f);
-
-        TestCharController.isHit = false;
-
-        isPlayerSliding = false;
+        yield return null;
     }
 }
 

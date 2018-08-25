@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class TestCharController : MonoBehaviour
 {
+
+    //Character Identity
+    //This variable keeps track of which character to spawn as, 1 = Cecilia, 2 = Leon, 3 = Risette, 4 = Sparrow
+    public static int charID = 0;
+
+
     //===========================================
     //             Character Managment
     //===========================================
@@ -18,8 +24,9 @@ public class TestCharController : MonoBehaviour
     public float stamNum = 1;
     public Image stamBar;
     public static bool isSprinting = false;
-    
+
     //Character's Weapon
+    public GameObject lightWep;
     public GameObject weapon;
     public AudioSource weaponSound;
 
@@ -31,6 +38,12 @@ public class TestCharController : MonoBehaviour
     public bool south;
     public bool east;
     public bool west;
+
+    //Diagonal Movement Controls
+
+    // 1 = north, 2 = south, 3 = east, 4 = west
+    public static int mainDirection = 0;
+    public static int secondaryDirection = 0;
 
     //Player Face
     public Image face;
@@ -97,37 +110,17 @@ public class TestCharController : MonoBehaviour
     public List<GameObject> manaFrames = new List<GameObject>();
     public List<GameObject> manaOrbs = new List<GameObject>();
 
-    //The Empty Mana Orbs
-    public GameObject manaFrame1;
-    public GameObject manaFrame2;
-    public GameObject manaFrame3;
-    public GameObject manaFrame4;
-    public GameObject manaFrame5;
-    public GameObject manaFrame6;
-    public GameObject manaFrame7;
-    public GameObject manaFrame8;
-    public GameObject manaFrame9;
-    public GameObject manaFrame10;
-    public GameObject manaFrame11;
-    public GameObject manaFrame12;
-
-    //The filled mana Orbs
-    public GameObject manaOrb1;
-    public GameObject manaOrb2;
-    public GameObject manaOrb3;
-    public GameObject manaOrb4;
-    public GameObject manaOrb5;
-    public GameObject manaOrb6;
-    public GameObject manaOrb7;
-    public GameObject manaOrb8;
-    public GameObject manaOrb9;
-    public GameObject manaOrb10;
-    public GameObject manaOrb11;
-    public GameObject manaOrb12;
-
     //Hud States
     public static bool inTreasure = false;
     public static bool inDialogue = false;
+    public static bool controller = false;
+
+    //Armor Bar UI
+    public GameObject armorGuage;
+
+    //Shield Bar UI
+    public GameObject shieldGuage;
+
 
     //===========================================
 
@@ -162,6 +155,8 @@ public class TestCharController : MonoBehaviour
 
     public SpriteRenderer weaponSprite;
 
+    public static bool attackEnabled;
+
     //===========================================
 
 
@@ -176,20 +171,34 @@ public class TestCharController : MonoBehaviour
     public static bool arcanaEnabled = true;
 
     //Button Prompts
-
     public GameObject leftClickPrompt;
     public GameObject rightClickPrompt;
     public GameObject middleClickPrompt;
-
+    public GameObject lTriggerPrompt;
 
     //Break flags
-
     public static bool startBreak = false;
     public static bool breakHit = false;
     public GameObject breakTargetSingle;
 
     public static bool harrierBreak = false;
+    public bool breakBuffer = false;
 
+    //Slow
+    public static float slowModifier = 1;
+
+    //---Comapnion---
+    //0 none
+    //1 Cecilia
+    //2 Leon
+    //3 Risette
+    //4 Sparrow
+    public static int companionID = 0;
+
+
+    void Awake()
+    {
+    }
 
     // Use this for initialization
     void Start()
@@ -199,6 +208,9 @@ public class TestCharController : MonoBehaviour
         weaponSound = weapon.GetComponent<AudioSource>();
         playerAttack = player.GetComponent<AudioSource>();
         playerSprite = player.GetComponent<SpriteRenderer>();
+
+        //face = GameObject.Find("Player_HUD").transform.Find("Top_Left").transform.Find("FacePlate").transform.Find("CharMask").transform.Find("CharPic").GetComponent<Image>();
+
 
         miniMap = GameObject.Find("MiniMap");
 
@@ -227,260 +239,301 @@ public class TestCharController : MonoBehaviour
         castNoise[0] = (AudioClip)Resources.Load("Sound/Cecilia/Female_ChargeUp_05_Rina");
         castNoise[1] = (AudioClip)Resources.Load("Sound/Cecilia/Female_ChargeUp_06_Rina");
 
-        //Getting the mana Frame UI components
-        manaFrame1 = GameObject.Find("ManaOrbFrame_1");
-        manaFrame2 = GameObject.Find("ManaOrbFrame_2");
-        manaFrame3 = GameObject.Find("ManaOrbFrame_3");
-        manaFrame4 = GameObject.Find("ManaOrbFrame_4");
-        manaFrame5 = GameObject.Find("ManaOrbFrame_5");
-        manaFrame6 = GameObject.Find("ManaOrbFrame_6");
-        manaFrame7 = GameObject.Find("ManaOrbFrame_7");
-        manaFrame8 = GameObject.Find("ManaOrbFrame_8");
-        manaFrame9 = GameObject.Find("ManaOrbFrame_9");
-        manaFrame10 = GameObject.Find("ManaOrbFrame_10");
-        manaFrame11 = GameObject.Find("ManaOrbFrame_11");
-        manaFrame12 = GameObject.Find("ManaOrbFrame_12");
-
         //Add the frames to the mana frame list
-        manaFrames.Add(manaFrame1);
-        manaFrames.Add(manaFrame2);
-        manaFrames.Add(manaFrame3);
-        manaFrames.Add(manaFrame4);
-        manaFrames.Add(manaFrame5);
-        manaFrames.Add(manaFrame6);
-        manaFrames.Add(manaFrame7);
-        manaFrames.Add(manaFrame8);
-        manaFrames.Add(manaFrame9);
-        manaFrames.Add(manaFrame10);
-        manaFrames.Add(manaFrame11);
-        manaFrames.Add(manaFrame12);
-
-        manaOrb1 = GameObject.Find("ManaOrb1");
-        manaOrb2 = GameObject.Find("ManaOrb2");
-        manaOrb3 = GameObject.Find("ManaOrb3");
-        manaOrb4 = GameObject.Find("ManaOrb4");
-        manaOrb5 = GameObject.Find("ManaOrb5");
-        manaOrb6 = GameObject.Find("ManaOrb6");
-        manaOrb7 = GameObject.Find("ManaOrb7");
-        manaOrb8 = GameObject.Find("ManaOrb8");
-        manaOrb9 = GameObject.Find("ManaOrb9");
-        manaOrb10 = GameObject.Find("ManaOrb10");
-        manaOrb11 = GameObject.Find("ManaOrb11");
-        manaOrb12 = GameObject.Find("ManaOrb12");
-
-        //Add the mana orbs to the orb list
-        manaOrbs.Add(manaOrb1);
-        manaOrbs.Add(manaOrb2);
-        manaOrbs.Add(manaOrb3);
-        manaOrbs.Add(manaOrb4);
-        manaOrbs.Add(manaOrb5);
-        manaOrbs.Add(manaOrb6);
-        manaOrbs.Add(manaOrb7);
-        manaOrbs.Add(manaOrb8);
-        manaOrbs.Add(manaOrb9);
-        manaOrbs.Add(manaOrb10);
-        manaOrbs.Add(manaOrb11);
-        manaOrbs.Add(manaOrb12);
-
-
-        manaFrame1.gameObject.SetActive(false);
-        manaFrame2.gameObject.SetActive(false);
-        manaFrame3.gameObject.SetActive(false);
-        manaFrame4.gameObject.SetActive(false);
-        manaFrame5.gameObject.SetActive(false);
-        manaFrame6.gameObject.SetActive(false);
-        manaFrame7.gameObject.SetActive(false);
-        manaFrame8.gameObject.SetActive(false);
-        manaFrame9.gameObject.SetActive(false);
-        manaFrame10.gameObject.SetActive(false);
-        manaFrame11.gameObject.SetActive(false);
-        manaFrame12.gameObject.SetActive(false);
-
-        manaOrb1.gameObject.SetActive(false);
-        manaOrb2.gameObject.SetActive(false);
-        manaOrb3.gameObject.SetActive(false);
-        manaOrb4.gameObject.SetActive(false);
-        manaOrb5.gameObject.SetActive(false);
-        manaOrb6.gameObject.SetActive(false);
-        manaOrb7.gameObject.SetActive(false);
-        manaOrb8.gameObject.SetActive(false);
-        manaOrb9.gameObject.SetActive(false);
-        manaOrb10.gameObject.SetActive(false);
-        manaOrb11.gameObject.SetActive(false);
-        manaOrb12.gameObject.SetActive(false);
-
-        north = true;
+        for (int i = 1; i <= 12; i++)
+        {
+            manaFrames.Add(GameObject.Find("ManaOrbFrame_" + i));
+            manaOrbs.Add(GameObject.Find("ManaOrb" + i));
+        }
+        
+        //initialize the mana frames
+        for(int i = 0; i< manaFrames.Count; i++)
+        {
+            manaFrames[i].SetActive(false);
+        }
+        //initialize the mana orbs
+        for(int i = 0; i < manaOrbs.Count; i++)
+        {
+            manaOrbs[i].SetActive(false);
+        }
+        
+        if(LevelCreator.startTag == "Up")
+        {
+            north = true;
+            west = false;
+            east = false;
+            south = false;
+            mainDirection = 1;
+        }
+        else if(LevelCreator.startTag == "Left")
+        {
+            west = true;
+            north = false;
+            east = false;
+            south = false;
+            mainDirection = 4;
+        }
+        else if(LevelCreator.startTag == "Right")
+        {
+            east = true;
+            west = false;
+            north = false;
+            south = false;
+            mainDirection = 3;
+        }
+        else if(LevelCreator.startTag == "Down")
+        {
+            south = true;
+            west = false;
+            east = false;
+            north = false;
+            mainDirection = 2;
+        }
 
         //Reset the charge multiplier
         chargeMult = 0;
+
+        healthGauge = GameObject.Find("HPBar");
+        healthNum = GameObject.Find("HealthNum").GetComponent<Text>();
+        armorGuage = GameObject.Find("ArmorBar");
+        shieldGuage = GameObject.Find("ShieldBar");
+        stamBar = GameObject.Find("StamBar").GetComponent<Image>();
+        staminaGauge = GameObject.Find("StamBar");
+        staminaNum = GameObject.Find("StamNum").GetComponent<Text>();
+        face = GameObject.Find("CharPic_Real").GetComponent<Image>();
+
+
+        PlayerStats.currentArmor = PlayerStats.armAmount;
+        PlayerStats.currentShield = PlayerStats.shieldAmount;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!isSwinging && !isHit && !InventoryController.inInv && !isSliding && !inDialogue)
+        if(Input.GetKey(KeyCode.V))
         {
+            PlayerStats.breakMeter = 100;
+        }
+
+        /*
+        if (Mathf.Abs(InputManager.CursorJoystick().magnitude) > 0)
+        {
+            HardwareCursor.SimulateController(Input.GetAxis("J_CursorHorizontal"), Input.GetAxis("J_CursorVertical"), 8);
+        }
+
+        
+        if(InputManager.A_Button() && (PotionController.hoverPotion || inDialogue || inTreasure))
+        {
+            controller = true;
+            HardwareCursor.LeftClick();
+            StartCoroutine(ControllerBuffer());
+        }
+        if(InputManager.B_Button() && (PotionController.hoverPotion || inDialogue || inTreasure))
+        {
+            controller = true;
+            HardwareCursor.RightClick();
+            StartCoroutine(ControllerBuffer());
+        }
+        */
+
+        if (!isSwinging && !isHit && !InventoryController.inInv && !isSliding && !inDialogue && !inTreasure)
+        {
+            //Reset Player face
             face.sprite = defaultFace.sprite;
-            if (Input.GetKey(KeyCode.W))
+
+            float chargeModifier = 1f;
+            if(charging)
             {
-                playerRB.velocity = new Vector2(0, (.85f + swiftnessModfier));
-                if(charging)
-                {
-                    playerRB.velocity = new Vector2(0, (.6f + swiftnessModfier));
-                }
-                else if(isSprinting)
-                {
-                    playerRB.velocity = new Vector2(0, (1.25f + swiftnessModfier));
-                }
-                playerVel = new Vector2(0, 3);
+                chargeModifier = .5f;
+            }
 
-                north = true;
-                south = false;
-                east = false;
-                west = false;
+            playerRB.velocity = (InputManager.MainJoystick() * 1.25f) * (1 + PlayerStats.speedAmount + swiftnessModfier) * chargeModifier * slowModifier;
 
-                if (Input.GetKeyDown(KeyCode.Space) && PlayerStats.stamina >= 25 && !charging)
+            if((InputManager.MainHorizontal() == 1 && InputManager.MainVertical() == 1) ||
+                (InputManager.MainHorizontal() == 1 && InputManager.MainVertical() == -1) ||
+                (InputManager.MainHorizontal() == -1 && InputManager.MainVertical() == 1) ||
+                (InputManager.MainHorizontal() == -1 && InputManager.MainVertical() == -1))
+            {
+                playerRB.velocity = ((InputManager.MainJoystick() * 1.25f) * (1 + PlayerStats.speedAmount + swiftnessModfier) * chargeModifier) * .75f * slowModifier;
+            } 
+
+
+            //print(InputManager.MainJoystick());
+            //Determine Animation (Keyboard)
+            //if(InputManager.MainHorizontal() > 0 && InputManager.MainVertical() == 0)
+
+            //Determine Animation (Controller)
+
+            //Up/Down
+            if(Mathf.Abs(InputManager.MainVertical()) > Mathf.Abs(InputManager.MainHorizontal()))
+            {
+                if(InputManager.MainVertical() > 0 && InputManager.MainVertical() <= .75f)
                 {
-                    player.GetComponent<Animator>().Play("Dash_Up");
-                    playerRB.velocity = new Vector2(0, 7);
-                    StartCoroutine(SlideRoutine());
-                    PlayerStats.stamina -= 25;
+                    player.GetComponent<Animator>().Play("TestUpWalk");
+                    north = true;
+                    west = false;
+                    east = false;
+                    south = false;
                 }
-                else if(Input.GetKey(KeyCode.LeftShift) && !isSprinting)
+                else if(InputManager.MainVertical() > .75f && InputManager.MainVertical() <= 1f)
                 {
-                    isSprinting = true;
+                    player.GetComponent<Animator>().Play("Sprint_Up");
+                    north = true;
+                    west = false;
+                    east = false;
+                    south = false;
+                }
+                else if(InputManager.MainVertical() < 0 && InputManager.MainVertical() >= -.75f)
+                {
+                    player.GetComponent<Animator>().Play("TestWalkDown");
+                    north = false;
+                    west = false;
+                    east = false;
+                    south = true;
+                }
+                else if(InputManager.MainVertical() < -.75f && InputManager.MainVertical() >= -1f)
+                {
+                    player.GetComponent<Animator>().Play("Sprint_Down");
+                    north = false;
+                    west = false;
+                    east = false;
+                    south = true;
                 }
             }
-            else if (Input.GetKey(KeyCode.A))
+
+            //Left/Right
+            else if (Mathf.Abs(InputManager.MainVertical()) < Mathf.Abs(InputManager.MainHorizontal()))
             {
-                playerRB.velocity = new Vector2((-.85f - swiftnessModfier), 0);
-                if (charging)
+                if (InputManager.MainHorizontal() > 0 && InputManager.MainHorizontal() <= .75f)
                 {
-                    playerRB.velocity = new Vector2((-.6f - swiftnessModfier), 0);
+                    player.GetComponent<Animator>().Play("TestRightWalk");
+                    north = false;
+                    west = false;
+                    east = true;
+                    south = false;
                 }
-                else if (isSprinting)
+                else if (InputManager.MainHorizontal() > .75f && InputManager.MainHorizontal() <= 1f)
                 {
-                    playerRB.velocity = new Vector2((-1.25f - swiftnessModfier), 0);
+                    player.GetComponent<Animator>().Play("Sprint_Right");
+                    north = false;
+                    west = false;
+                    east = true;
+                    south = false;
                 }
-                playerVel = new Vector2(-3, 0);
-
-                north = false;
-                south = false;
-                east = false;
-                west = true;
-
-                if (Input.GetKeyDown(KeyCode.Space) && PlayerStats.stamina >= 25 && !charging)
+                else if (InputManager.MainHorizontal() < 0 && InputManager.MainHorizontal() >= -.75f)
                 {
-                    player.GetComponent<Animator>().Play("Dash_Left");
-                    playerRB.velocity = new Vector2(-7, 0);
-                    StartCoroutine(SlideRoutine());
-                    PlayerStats.stamina -= 25;
+                    player.GetComponent<Animator>().Play("TestLeftWalk");
+                    north = false;
+                    west = true;
+                    east = false;
+                    south = false;
                 }
-                else if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
+                else if (InputManager.MainHorizontal() < -.75f && InputManager.MainHorizontal() >= -1f)
                 {
-                    isSprinting = true;
+                    player.GetComponent<Animator>().Play("Sprint_Left");
+                    north = false;
+                    west = true;
+                    east = false;
+                    south = false;
                 }
             }
-            else if (Input.GetKey(KeyCode.D))
+
+            else if(Mathf.Abs(InputManager.MainHorizontal()) == Mathf.Abs(InputManager.MainVertical()) && 
+                Mathf.Abs(InputManager.MainHorizontal()) > 0 && Mathf.Abs(InputManager.MainVertical()) > 0)
             {
-                playerRB.velocity = new Vector2((.85f + swiftnessModfier), 0);
-                if (charging)
+                if(InputManager.MainHorizontal() > 0)
                 {
-                    playerRB.velocity = new Vector2((.6f + swiftnessModfier), 0);
+                    player.GetComponent<Animator>().Play("Sprint_Right");
+                    north = false;
+                    west = false;
+                    east = true;
+                    south = false;
                 }
-                else if (isSprinting)
+                else if(InputManager.MainHorizontal() < 0)
                 {
-                    playerRB.velocity = new Vector2((1.25f + swiftnessModfier), 0);
-                }
-                playerVel = new Vector2(3, 0);
-
-                north = false;
-                south = false;
-                east = true;
-                west = false;
-
-                if (Input.GetKeyDown(KeyCode.Space) && PlayerStats.stamina >= 25 && !charging)
-                {
-                    player.GetComponent<Animator>().Play("Dash_Right");
-                    playerRB.velocity = new Vector2(7, 0);
-                    StartCoroutine(SlideRoutine());
-                    PlayerStats.stamina -= 25;
-                }
-                else if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
-                {
-                    isSprinting = true;
+                    player.GetComponent<Animator>().Play("Sprint_Left");
+                    north = false;
+                    west = true;
+                    east = false;
+                    south = false;
                 }
             }
-            else if (Input.GetKey(KeyCode.S))
+
+            else if (InputManager.MainHorizontal() == 0 && InputManager.MainVertical() == 0)
             {
-                playerRB.velocity = new Vector2(0, (-.85f - swiftnessModfier));
-                if (charging)
+                if(north)
                 {
-                    playerRB.velocity = new Vector2(0, (-.6f - swiftnessModfier));
+                    player.GetComponent<Animator>().Play("TestUpIdle");
                 }
-                else if (isSprinting)
+                else if(south)
                 {
-                    playerRB.velocity = new Vector2(0, (-1.25f - swiftnessModfier));
+                    player.GetComponent<Animator>().Play("TestDownIdle");
                 }
-                playerVel = new Vector2(0, -3);
-
-                north = false;
-                south = true;
-                east = false;
-                west = false;
-
-                if (Input.GetKeyDown(KeyCode.Space) && PlayerStats.stamina >= 25 && !charging)
+                else if(west)
                 {
-                    player.GetComponent<Animator>().Play("Dash_Down");
-                    playerRB.velocity = new Vector2(0, -7);
-                    StartCoroutine(SlideRoutine());
-                    PlayerStats.stamina -= 25;
+                    player.GetComponent<Animator>().Play("TestLeftIdle");
                 }
-                else if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
+                else
                 {
-                    isSprinting = true;
+                    player.GetComponent<Animator>().Play("TestRightIdle");
                 }
             }
-            if (Input.GetKeyUp(KeyCode.W) && !isSliding)
-            {
-                //player.transform.Translate(new Vector2(0, 0));
-                weapon.transform.eulerAngles = new Vector3(0, 0, 180);
-                playerRB.velocity = new Vector2(0, 0);
 
-            }
-            if (Input.GetKeyUp(KeyCode.A) && !isSliding)
+            //Sprinting
+            if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
             {
-                //player.transform.Translate(new Vector2(0, 0));
-                weapon.transform.eulerAngles = new Vector3(0, 0, 270);
-                playerRB.velocity = new Vector2(0, 0);
-
+                isSprinting = true;
             }
-            if (Input.GetKeyUp(KeyCode.D) && !isSliding)
-            {
-                // player.transform.Translate(new Vector2(0, 0));
-                weapon.transform.eulerAngles = new Vector3(0, 0, 90);
-                playerRB.velocity = new Vector2(0, 0);
-            }
-            if (Input.GetKeyUp(KeyCode.S) && !isSliding)
-            {
-                // player.transform.Translate(new Vector2(0, 0));
-                weapon.transform.eulerAngles = new Vector3(0, 0, 0);
-                playerRB.velocity = new Vector2(0, 0);
-            }
-            if(!Input.GetKey(KeyCode.LeftShift))
+            if (!Input.GetKey(KeyCode.LeftShift))
             {
                 isSprinting = false;
             }
 
+            //Invuln
             if(invuln && !invulnRoutine)
             {
                 invulnRoutine = true;
                 StartCoroutine(IFrameRoutine());
             }
 
+            //Dashing
+            if((Input.GetKeyDown(KeyCode.Space) || InputManager.J_Space()) && PlayerStats.stamina >= 25 && !charging)
+            {
+                PlayerStats.stamina -= 25;
+                if (north)
+                {
+                    player.GetComponent<Animator>().Play("Dash_Up");
+                    playerRB.velocity = new Vector2(0, 6);
+                    //playerRB.velocity = new Vector2(0, 7);
+                    StartCoroutine(SlideRoutine());    
+                }
+                else if(south)
+                {
+                    player.GetComponent<Animator>().Play("Dash_Down");
+                    playerRB.velocity = new Vector2(0, -6);
+                    //playerRB.velocity = new Vector2(0, -7);
+                    StartCoroutine(SlideRoutine());
+                }
+                else if(east)
+                {
+                    player.GetComponent<Animator>().Play("Dash_Right");
+                    playerRB.velocity = new Vector2(6, 0);
+                    //playerRB.velocity = new Vector2(7, 0);
+                    StartCoroutine(SlideRoutine());
+                }
+                else if(west)
+                {
+                    player.GetComponent<Animator>().Play("Dash_Left");
+                    playerRB.velocity = new Vector2(-6, 0);
+                    //playerRB.velocity = new Vector2(-7, 0);
+                    StartCoroutine(SlideRoutine());
+                }
+            }
 
         }
 
+        /*
         //Toggles the minimap portion of the HUD
         if(Input.GetKeyDown(KeyCode.M))
         {
@@ -496,11 +549,12 @@ public class TestCharController : MonoBehaviour
                 miniMap.SetActive(true);
             }
         }
+        */
 
         //Left Mouse Click, light attack processing
-        if (Input.GetMouseButtonDown(0) && !InventoryController.inInv && !inTreasure && !inDialogue && !PotionController.hoverPotion)
+        if ((Input.GetMouseButton(0) || InputManager.J_Trigger() < 0) && !InventoryController.inInv && !inTreasure && !inDialogue && !PotionController.hoverPotion && attackEnabled && !controller)
         {
-            if(!isSwinging && PlayerStats.stamina >= 10)
+            if(!isSwinging && PlayerStats.stamina >= 15)
             {
                 if(InventoryManager.playerEquipment[0].itemID != 0 && InventoryManager.playerEquipment[0] != null)
                 {
@@ -509,14 +563,15 @@ public class TestCharController : MonoBehaviour
                 else
                 {
                     weaponSprite.sprite = Resources.Load<Sprite>("Item/W_Spear001");
-                }     
+                }
+
                 StartCoroutine(WeaponSwingRoutine());
             }
             
         }
 
         //Right Mouse Click, Special attack charge attack
-        if (Input.GetMouseButton(1) && !InventoryController.inInv && !inTreasure && !inDialogue && !PotionController.hoverPotion && !charging && !chargeBuffer)
+        if ((Input.GetMouseButton(1) || InputManager.J_Trigger() > 0)  && !InventoryController.inInv && !inTreasure && !inDialogue && !PotionController.hoverPotion && !charging && !chargeBuffer && attackEnabled && !controller && PlayerStats.breakMeter < 100)
         {
             chargeFrame.SetActive(true);
             chargeBar.transform.localScale = new Vector2(0, 1);
@@ -526,6 +581,7 @@ public class TestCharController : MonoBehaviour
             chargeMult = 0;
             chargeBuffer = true;
 
+            /*
             if (InventoryManager.playerEquipment[0].itemID != 0 && InventoryManager.playerEquipment[0] != null)
             {
                 weaponSprite.sprite = Resources.Load<Sprite>("Item/" + InventoryManager.playerEquipment[0].itemIconName);
@@ -534,12 +590,13 @@ public class TestCharController : MonoBehaviour
             {
                 weaponSprite.sprite = Resources.Load<Sprite>("Item/W_Spear001");
             }
+            */
 
             StartCoroutine(ChargeWeaponRoutine());
         }
 
   
-        if (!Input.GetMouseButton(1) && charging && chargeBuffer)
+        if ((!Input.GetMouseButton(1) && InputManager.J_Trigger() <= 0) && charging && chargeBuffer)
         {
             charging = false;
             /*
@@ -568,6 +625,44 @@ public class TestCharController : MonoBehaviour
 
 
     }
+
+    public void SetPlayerDirection()
+    {
+        if (LevelCreator.startTag == "Up")
+        {
+            north = true;
+            west = false;
+            east = false;
+            south = false;
+            mainDirection = 1;
+        }
+        else if (LevelCreator.startTag == "Left")
+        {
+            west = true;
+            north = false;
+            east = false;
+            south = false;
+            mainDirection = 4;
+        }
+        else if (LevelCreator.startTag == "Right")
+        {
+            east = true;
+            west = false;
+            north = false;
+            south = false;
+            mainDirection = 3;
+        }
+        else if (LevelCreator.startTag == "Down")
+        {
+            south = true;
+            west = false;
+            east = false;
+            north = false;
+            mainDirection = 2;
+        }
+    }
+
+
 
     //The Time buffer between heavy attack and charge
     IEnumerator RightClickBuffer()
@@ -621,7 +716,7 @@ public class TestCharController : MonoBehaviour
             {
                 velocity = 15;
             }
-            yield return new WaitForSeconds(.018f);
+            yield return new WaitForSeconds(.01f);
         }
 
 
@@ -629,31 +724,67 @@ public class TestCharController : MonoBehaviour
         charging = false;
         isSliding = true;
         isHeavy = true;
+        lightWep.SetActive(true);
+        AudioClip attack = Resources.Load("Sound/Cecilia/WeaponSwing1") as AudioClip;
+        lightWep.GetComponent<AudioSource>().clip = attack;
+        lightWep.GetComponent<AudioSource>().Play();
         if (north)
         {
-            player.GetComponent<Animator>().Play("Dash_Up");
+            lightWep.transform.rotation = Quaternion.Euler(0, 0, 90);
+            if (chargeMult < 1.5)
+            {
+                player.GetComponent<Animator>().Play("Special_Weak_Up");
+            }
+            else
+            {
+                player.GetComponent<Animator>().Play("Special_Strong_Up");
+            }
             weapon.transform.eulerAngles = new Vector3(0, 0, 135);
             playerRB.velocity = new Vector2(0, velocity);
         }
         else if (south)
         {
-            player.GetComponent<Animator>().Play("Dash_Down");
+            lightWep.transform.rotation = Quaternion.Euler(0, 0, 270);
+            if (chargeMult < 1.5)
+            {
+                player.GetComponent<Animator>().Play("Special_Weak_Down");
+            }
+            else
+            {
+                player.GetComponent<Animator>().Play("Special_Strong_Down");
+            }
             weapon.transform.eulerAngles = new Vector3(0, 0, 315);
             playerRB.velocity = new Vector2(0, -velocity);
         }
         else if (east)
         {
-            player.GetComponent<Animator>().Play("Dash_Right");
+            lightWep.transform.rotation = Quaternion.Euler(0, 0, 0);
+            if (chargeMult < 1.5)
+            {
+                player.GetComponent<Animator>().Play("Special_Weak_Right");
+            }
+            else
+            {
+                player.GetComponent<Animator>().Play("Special_Strong_Right");
+            }
             weapon.transform.eulerAngles = new Vector3(0, 0, 45);
             playerRB.velocity = new Vector2(velocity, 0);
         }
         else if (west)
         {
-            player.GetComponent<Animator>().Play("Dash_Left");
+            lightWep.transform.rotation = Quaternion.Euler(0, 0, 180);
+            if (chargeMult < 1.5)
+            {
+                player.GetComponent<Animator>().Play("Special_Weak_Left");
+            }
+            else
+            {
+                player.GetComponent<Animator>().Play("Special_Strong_Left");
+            }
             weapon.transform.eulerAngles = new Vector3(0, 0, 225);
             playerRB.velocity = new Vector2(-velocity, 0);
         }
-        weapon.SetActive(true);
+        //weapon.SetActive(true);
         face.sprite = attackFace.sprite;
         weaponSound.Play();
         PlayAttackNoise();
@@ -661,14 +792,14 @@ public class TestCharController : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         playerSprite.color = new Color(1f, 1f, 1f);
         isHeavy = false;
-        weapon.SetActive(false);
+        //weapon.SetActive(false);
         isSliding = false;
         dust.SetActive(false);
         isCharging = false;
-
+        chargeMult = 0;
         chargeBuffer = true;
         StartCoroutine(RightClickBuffer());
-
+        lightWep.SetActive(false);
         if (north)
         {
             player.GetComponent<Animator>().Play("TestUpIdle");
@@ -726,34 +857,89 @@ public class TestCharController : MonoBehaviour
 
         isSwinging = true;
         face.sprite = attackFace.sprite;
-        playerRB.velocity = (playerVel.normalized) * .25f;
-        weapon.gameObject.SetActive(true);
-        weaponSound.Play();
+        if(north)
+        {
+            playerRB.velocity = (new Vector2(0, 1)) * .55f;
+        }
+        else if(south)
+        {
+            playerRB.velocity = (new Vector2(0, -1)) * .55f;
+        }
+        else if(east)
+        {
+            playerRB.velocity = (new Vector2(1, 0)) * .55f;
+        }
+        else if(west)
+        {
+            playerRB.velocity = (new Vector2(-1, 0)) * .55f;
+        }
         PlayAttackNoise();
-        SetWepDir();
-        weapon.transform.eulerAngles = wepDir;
-        PlayerStats.UseStam(10);
+        PlayerStats.UseStam(15);
 
         //If on 1st combo, right sweep
         if(internalComboCounter == 0)
         {
-            for (int i = 0; i <= 90; i += 10)
+            if (north)
             {
-                weapon.transform.eulerAngles = new Vector3(0, 0, weapon.transform.eulerAngles.z - 10);
-                yield return new WaitForSeconds(.01f);
+                player.GetComponent<Animator>().Play("Test_Jab_Up");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 90);
             }
+            else if (south)
+            {
+                player.GetComponent<Animator>().Play("Test_Jab_Down");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 270);
+            }
+            else if (west)
+            {
+                player.GetComponent<Animator>().Play("Test_Jab_Left");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 180);
+            }
+            else if (east)
+            {
+                player.GetComponent<Animator>().Play("Test_Jab_Right");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            yield return new WaitForSeconds(.1f);
+            lightWep.SetActive(true);
+            AudioClip attack = Resources.Load("Sound/Cecilia/WeaponSwing1") as AudioClip;
+            lightWep.GetComponent<AudioSource>().clip = attack;
+            lightWep.GetComponent<AudioSource>().Play();
+            yield return new WaitForSeconds(.2f);
+            lightWep.SetActive(false);
             internalComboCounter++;
         }
         //If on 2nd combo, left sweep
         else if(internalComboCounter == 1)
         {
             weapon.transform.eulerAngles = new Vector3(0, 0, weapon.transform.eulerAngles.z - 90);
-            for (int i = 0; i <= 90; i += 10)
-            {
-                weapon.transform.eulerAngles = new Vector3(0, 0, weapon.transform.eulerAngles.z + 10);
-                yield return new WaitForSeconds(.01f);
 
+            if (north)
+            {
+                player.GetComponent<Animator>().Play("Test_Slash1_Up");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 90);
             }
+            else if (south)
+            {
+                player.GetComponent<Animator>().Play("Test_Slash1_Down");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 270);
+            }
+            else if (west)
+            {
+                player.GetComponent<Animator>().Play("Test_Slash1_Left");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 180);
+            }
+            else if (east)
+            {
+                player.GetComponent<Animator>().Play("Test_Slash1_Right");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            yield return new WaitForSeconds(.1f);
+            lightWep.SetActive(true);
+            AudioClip attack = Resources.Load("Sound/Cecilia/WeaponSwing2") as AudioClip;
+            lightWep.GetComponent<AudioSource>().clip = attack;
+            lightWep.GetComponent<AudioSource>().Play();
+            yield return new WaitForSeconds(.2f);
+            lightWep.SetActive(false);
             internalComboCounter++;
             
         }
@@ -761,64 +947,44 @@ public class TestCharController : MonoBehaviour
         else if(internalComboCounter == 2)
         {
             weapon.transform.eulerAngles = new Vector3(0, 0, wepDir.z - 45);
-            //pull back
-            if(north)
+            if (north)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.03f);
-                    yield return new WaitForSeconds(.005f);
-                }
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y + 0.1f);
-                yield return new WaitForSeconds(.1f);
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.045f);
+                player.GetComponent<Animator>().Play("Test_Slash2_Up");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 90);
             }
-            else if(south)
+            else if (south)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y + 0.03f);
-                    yield return new WaitForSeconds(.005f);
-                }
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.1f);
-                yield return new WaitForSeconds(.1f);
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.045f);
+                player.GetComponent<Animator>().Play("Test_Slash2_Down");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 270);
             }
-            else if(east)
+            else if (west)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    weapon.transform.position = new Vector2(player.transform.position.x - 0.07f, player.transform.position.y);
-                    yield return new WaitForSeconds(.005f);
-                }
-                weapon.transform.position = new Vector2(player.transform.position.x + 0.1f, player.transform.position.y);
-                yield return new WaitForSeconds(.1f);
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.045f);
+                player.GetComponent<Animator>().Play("Test_Slash2_Left");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 180);
             }
-            else if(west)
+            else if (east)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    weapon.transform.position = new Vector2(player.transform.position.x + 0.07f, player.transform.position.y);
-                    yield return new WaitForSeconds(.005f);
-                }
-                weapon.transform.position = new Vector2(player.transform.position.x - 0.1f, player.transform.position.y);
-                yield return new WaitForSeconds(.1f);
-                weapon.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - 0.045f);
+                player.GetComponent<Animator>().Play("Test_Slash2_Right");
+                lightWep.transform.rotation = Quaternion.Euler(0, 0, 0);
             }
+            yield return new WaitForSeconds(.1f);
+            lightWep.SetActive(true);
+            AudioClip attack = Resources.Load("Sound/Cecilia/WeaponSwing3") as AudioClip;
+            lightWep.GetComponent<AudioSource>().clip = attack;
+            lightWep.GetComponent<AudioSource>().Play();
+            yield return new WaitForSeconds(.2f);
+            lightWep.SetActive(false);
             internalComboCounter = 0;
         }
 
-        weapon.gameObject.SetActive(false);
         yield return new WaitForSeconds(.05f);
-        weapon.transform.eulerAngles = wepDir;
         internalBuffer = StartCoroutine(LightComboBuffer());
         isSwinging = false;   
     }
 
     IEnumerator LightComboBuffer()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(.5f);
         internalComboCounter = 0;
     }
 
@@ -873,11 +1039,37 @@ public class TestCharController : MonoBehaviour
     //Updates the Health Bar bar on the HUD, resizing and changing the number
     void UpdateHealth()
     {
-        healthNum.text = PlayerStats.health.ToString();
+        //Display Shield
+        if(PlayerStats.currentShield > 0)
+        {
+            healthNum.text = PlayerStats.currentShield.ToString();
+        }
+        else if(PlayerStats.currentArmor > 0)
+        {
+            healthNum.text = PlayerStats.currentArmor.ToString();
+        }
+        else
+        {
+            healthNum.text = PlayerStats.health.ToString();
+        }
+
         var hpRect = healthGauge.transform as RectTransform;
+        var armRect = armorGuage.transform as RectTransform;
+        var shieldRect = shieldGuage.transform as RectTransform;
+
         hpIncrement = healthDefaultWidth / PlayerStats.maxHealth;
         float newWidth = PlayerStats.health * hpIncrement;
         hpRect.sizeDelta = new Vector2(newWidth, hpRect.sizeDelta.y);
+
+        hpIncrement = healthDefaultWidth / 300;
+        float newWidth2 = PlayerStats.currentArmor * hpIncrement;
+        armRect.sizeDelta = new Vector2(newWidth2, armRect.sizeDelta.y);
+
+        hpIncrement = healthDefaultWidth / 300;
+        float newWidth3 = PlayerStats.currentShield * hpIncrement;
+        shieldRect.sizeDelta = new Vector2(newWidth3, shieldRect.sizeDelta.y);
+
+
     }
 
     //Updates the mana orbs on the HUD
@@ -891,7 +1083,7 @@ public class TestCharController : MonoBehaviour
             manaOrbs[i].SetActive(false);
         }
         //check how many frames should be generated
-        int numOrbs = (PlayerStats.wisdom + PlayerStats.bonusWIS) / 5;
+        int numOrbs = (PlayerStats.wisdom + PlayerStats.bonusWIS + PlayerStats.wisTalent) / 5;
         if(PlayerStats.mana > PlayerStats.maxMana)
         {
             PlayerStats.mana = PlayerStats.maxMana;
@@ -934,19 +1126,19 @@ public class TestCharController : MonoBehaviour
 
         if(north)
         {
-            player.GetComponent<Animator>().Play("TestUpIdle");
+            player.GetComponent<Animator>().Play("Sprint_Up");
         }
         else if(south)
         {
-            player.GetComponent<Animator>().Play("TestDownIdle");
+            player.GetComponent<Animator>().Play("Sprint_Down");
         }
         else if(east)
         {
-            player.GetComponent<Animator>().Play("TestRightIdle");
+            player.GetComponent<Animator>().Play("Sprint_Right");
         }
         else
         {
-            player.GetComponent<Animator>().Play("TestLeftIdle");
+            player.GetComponent<Animator>().Play("Sprint_Left");
         }
     }
 
@@ -975,6 +1167,8 @@ public class TestCharController : MonoBehaviour
         invuln = false;
         invulnRoutine = false;
         player.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
+        isHit = false;
+        isSliding = false;
     }
 
     /*=========================================================================
@@ -1008,7 +1202,7 @@ public class TestCharController : MonoBehaviour
         PlayAttackNoise();
         //Set player velocity to zero
         playerRB.velocity = new Vector2(0, 0);
-        weapon.SetActive(true);
+        lightWep.SetActive(true);
         GameObject.Find("BreakCharge").GetComponent<AudioSource>().Play();
 
         /*
@@ -1018,30 +1212,30 @@ public class TestCharController : MonoBehaviour
             yield return new WaitForSeconds(.01f);
         }
         */
-
+        dust.SetActive(true);
         //Determine Dash Direction
         if (north)
         {
-            player.GetComponent<Animator>().Play("Dash_Up");
-            weapon.transform.eulerAngles = new Vector3(0, 0, 135);
+            player.GetComponent<Animator>().Play("Harrier_Up");
+            lightWep.transform.eulerAngles = new Vector3(0, 0, 90);
             playerRB.velocity = new Vector2(0, 15);
         }
         else if(south)
         {
-            player.GetComponent<Animator>().Play("Dash_Down");
-            weapon.transform.eulerAngles = new Vector3(0, 0, 315);
+            player.GetComponent<Animator>().Play("Harrier_Down");
+            lightWep.transform.eulerAngles = new Vector3(0, 0, 270);
             playerRB.velocity = new Vector2(0, -15);
         }
         else if(east)
         {
-            player.GetComponent<Animator>().Play("Dash_Right");
-            weapon.transform.eulerAngles = new Vector3(0, 0, 45);
+            player.GetComponent<Animator>().Play("Harrier_Right");
+            lightWep.transform.eulerAngles = new Vector3(0, 0, 0);
             playerRB.velocity = new Vector2(15, 0);
         }
         else if(west)
         {
-            player.GetComponent<Animator>().Play("Dash_Left");
-            weapon.transform.eulerAngles = new Vector3(0, 0, 225);
+            player.GetComponent<Animator>().Play("Harrier_Left");
+            lightWep.transform.eulerAngles = new Vector3(0, 0, 180);
             playerRB.velocity = new Vector2(-15, 0);
         }
 
@@ -1053,11 +1247,12 @@ public class TestCharController : MonoBehaviour
         //At the end of the dash, if an enemy is hit execute the prompt routine
         if(breakHit)
         {
+            dust.SetActive(false);
             yield return StartCoroutine(HarrierHitRoutine());
         }
 
         //Jump Back!
-
+        
         //Determine Reverse Dash Direction
         if (north)
         {
@@ -1079,7 +1274,8 @@ public class TestCharController : MonoBehaviour
             player.GetComponent<Animator>().Play("TestLeftIdle");
             playerRB.velocity = new Vector2(7, 0);
         }
-        weapon.SetActive(false);
+        dust.SetActive(false);
+        lightWep.SetActive(false);
         yield return new WaitForSeconds(1f);
 
         float volume = .1f;
@@ -1106,15 +1302,24 @@ public class TestCharController : MonoBehaviour
     {
         bool bufferSwitch = false;
         GetComponent<BoxCollider2D>().enabled = false;
-        leftClickPrompt.SetActive(true);
+        if(GameController.xbox360_Enabled)
+        {
+            lTriggerPrompt.SetActive(false);
+        }
+        else
+        {
+            leftClickPrompt.SetActive(true);
+        }
+        
         for(float i= 0; i < 3; i+=.1f)
         {
             if(breakTargetSingle == null)
             {
                 break;
             }
-            if(Input.GetMouseButton(0) && !bufferSwitch)
+            if((Input.GetMouseButton(0) || InputManager.J_Trigger() < 0) && !bufferSwitch && !breakBuffer)
             {
+                StartCoroutine(HitBuffer());
                 GameObject.Find("DamageNoise").GetComponent<AudioSource>().Play();
                 bufferSwitch = true;
                 if(breakTargetSingle != null)
@@ -1125,26 +1330,38 @@ public class TestCharController : MonoBehaviour
                 if (north)
                 {
                     playerRB.velocity = new Vector2(0, .05f);
+                    Instantiate(Resources.Load<GameObject>("Prefabs/Hit/Pirece_Anim"), transform.position, Quaternion.Euler(0, 0, 90));
                 }
                 else if(south)
                 {
                     playerRB.velocity = new Vector2(0, -.05f);
+                    Instantiate(Resources.Load<GameObject>("Prefabs/Hit/Pirece_Anim"), transform.position, Quaternion.Euler(0, 0, 270));
                 }
                 else if(east)
                 {
                     playerRB.velocity = new Vector2(.05f, 0);
+                    Instantiate(Resources.Load<GameObject>("Prefabs/Hit/Pirece_Anim"), transform.position, Quaternion.Euler(0, 0, 0));
                 }
                 else if(west)
                 {
                     playerRB.velocity = new Vector2(-.05f, 0);
+                    Instantiate(Resources.Load<GameObject>("Prefabs/Hit/Pirece_Anim"), transform.position, Quaternion.Euler(0, 0, 180));
                 }
             }
             yield return new WaitForSeconds(.1f);
             bufferSwitch = false;
         }
         leftClickPrompt.SetActive(false);
+        lTriggerPrompt.SetActive(false);
         GetComponent<BoxCollider2D>().enabled = true;
 
+    }
+
+    IEnumerator HitBuffer()
+    {
+        breakBuffer = true;
+        yield return new WaitForSeconds(.2f);
+        breakBuffer = false;
     }
 
     //Tier 1 Cecilia Skill: Reload?
@@ -1162,6 +1379,11 @@ public class TestCharController : MonoBehaviour
         }
     }
 
+    IEnumerator ControllerBuffer()
+    {
+        yield return new WaitForSeconds(.25f);
+        controller = false;
+    }
 
 
 

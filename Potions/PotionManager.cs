@@ -6,6 +6,9 @@ using UnityEngine;
 public class PotionManager : MonoBehaviour
 {
     public GameObject alcConfirm;
+    public Button yes;
+    public Button no;
+
     public GameObject shopDialogue;
     public GameObject alcOptions;
 
@@ -88,15 +91,35 @@ public class PotionManager : MonoBehaviour
 
     public bool potionAdd = false;
 
+    public Text gold;
+    public Button back;
+    public GameObject alcHUD;
+
+    public Button refill, nextPage, prevPage;
+    public GameObject pageObj, potionSelect, upgrade1, upgrade2;
+    public int page;
+    public Text pageText;
+
+    public GameObject playerInv, playerInvPanel;
+    public List<GameObject> slotList = new List<GameObject>();
+
     // Use this for initialization
     void Start ()
     {
         CheckUnlocks();
-	}
+        back.onClick.AddListener(backButton);
+        refill.onClick.AddListener(RefillPotions);
+        nextPage.onClick.AddListener(UpPage);
+        prevPage.onClick.AddListener(DownPage);
+
+        page = 0;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        gold.text = InventoryManager.playerGold.ToString();
+
         UpdatePotions();
         UpdateAdd();
 
@@ -107,8 +130,29 @@ public class PotionManager : MonoBehaviour
 
         if (hit.collider != null && hit.collider.tag == "Potion_Add" && hit.collider.gameObject.GetComponent<PotionUpgrade>().unlocked)
         {
+            hit.collider.gameObject.GetComponent<PotionUpgrade>().UpdateCosts();
             tooltip.SetActive(true);
             tooltipDesc.text = hit.collider.gameObject.GetComponent<PotionUpgrade>().tooltip;
+        }
+        else if(hit.collider != null && hit.collider.tag == "Alc_Equip" && Input.GetMouseButtonDown(0))
+        {
+            GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
+            GetComponent<Image>().sprite = Resources.Load<Sprite>("Inventory/ShopInv");
+            potionSelect.SetActive(true);
+            upgrade1.SetActive(false);
+            upgrade2.SetActive(false);
+            pageObj.SetActive(false);
+            playerInv.SetActive(false);
+        }
+        else if(hit.collider != null && hit.collider.tag == "Alc_Upgrage" && Input.GetMouseButtonDown(0))
+        {
+            GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
+            GetComponent<Image>().sprite = Resources.Load<Sprite>("Inventory/ShopInv2");
+            potionSelect.SetActive(false);
+            pageObj.SetActive(true);
+            UpdatePage();
+            playerInv.SetActive(true);
+            UpdateInv();
         }
         else
         {
@@ -123,9 +167,11 @@ public class PotionManager : MonoBehaviour
             if (hit.collider != null && hit.collider.tag == "PotionUnlock")
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the stamina potion? This potion will regenerate your stamina when used. I'll teach you the recipe for it for 500 Gold. How's that sound?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the stamina potion? This potion will regenerate your stamina when used. I'll teach you the recipe for it for 500 Gold. How's that sound?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = true;
                 alcConfirm.SetActive(true);
                 alcOptions.SetActive(false);
                 inUpgrade = true;
@@ -136,9 +182,11 @@ public class PotionManager : MonoBehaviour
             else if (hit.collider != null && hit.collider.tag == "PotionUnlock2")
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the stoneskin potion? This potion will grant you bonus defense when used. I'll teach you the recipe for it for 1000 Gold. How's that sound?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the stoneskin potion? This potion will grant you bonus defense when used. I'll teach you the recipe for it for 1000 Gold. How's that sound?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = true;
                 alcConfirm.SetActive(true);
                 alcOptions.SetActive(false);
                 inUpgrade = true;
@@ -149,9 +197,11 @@ public class PotionManager : MonoBehaviour
             else if (hit.collider != null && hit.collider.tag == "PotionUnlock3")
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the strength potion? This potion will grant you bonus strength when used. I'll teach you the recipe for it for 750 Gold. How's that sound?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the strength potion? This potion will grant you bonus strength when used. I'll teach you the recipe for it for 750 Gold. How's that sound?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = true;
                 alcConfirm.SetActive(true);
                 alcOptions.SetActive(false);
                 inUpgrade = true;
@@ -162,9 +212,11 @@ public class PotionManager : MonoBehaviour
             else if (hit.collider != null && hit.collider.tag == "PotionUnlock4")
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the alacrity potion? This potion will grant you bonus dexterity and movement speed when used. I'll teach you the recipe for it for 1000 Gold. How's that sound?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the alacrity potion? This potion will grant you bonus dexterity and movement speed when used. I'll teach you the recipe for it for 1000 Gold. How's that sound?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = true;
                 alcConfirm.SetActive(true);
                 alcOptions.SetActive(false);
                 inUpgrade = true;
@@ -174,9 +226,11 @@ public class PotionManager : MonoBehaviour
             else if(hit.collider != null && hit.collider.tag == "PotionUnlock5")
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the intellect potion? This potion will grant you bonus intelligence when used. I'll teach you the recipe for it for 750 Gold. How's that sound?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Interested in the intellect potion? This potion will grant you bonus intelligence when used. I'll teach you the recipe for it for 750 Gold. How's that sound?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = true;
                 alcConfirm.SetActive(true);
                 alcOptions.SetActive(false);
                 inUpgrade = true;
@@ -187,89 +241,90 @@ public class PotionManager : MonoBehaviour
             else if(hit.collider != null && hit.collider.tag == "Potion_Add" && hit.collider.gameObject.GetComponent<PotionUpgrade>().unlocked)
             {
                 click.Play();
+                shopDialogue.SetActive(true);
                 hit.collider.gameObject.GetComponent<Animator>().Play("Button");
                 if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 1)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your healing potion?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your healing potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo", 0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();                  
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 2)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your healing potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your healing potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo", 0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 3)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of you mana potion?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of you mana potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 4)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your mana potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your mana potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 5)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your stamina potions?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your stamina potions?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 6)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your stamina potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your stamina potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 7)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your stoneskin potion?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your stoneskin potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 8)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your stoneskin potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your stoneskin potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 9)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your strength potion?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your strength potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 10)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your strength potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your strength potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 11)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your alacrity potion?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your alacrity potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 12)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your alacrity potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your alacrity potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 13)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your intellect potion?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade the potency of your intellect potion?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 else if (hit.collider.gameObject.GetComponent<PotionUpgrade>().upgradeID == 14)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your intellect potion capacity?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Would you like to upgrade your intellect potion capacity?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 }
                 alcConfirm.SetActive(true);
@@ -286,12 +341,14 @@ public class PotionManager : MonoBehaviour
             if(hit.collider != null && hit.collider.tag == "Shop_Yes" && !potionAdd)
             {
                 click.Play();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = false;
+                GameObject.Find("PurchaseNoise").GetComponent<AudioSource>().Play();
                 //stam potion
                 if (potionID == 3)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     PotionController.staminaPotionAmount = 50;
                     PotionController.staminaPotionMax = 1;
@@ -303,8 +360,8 @@ public class PotionManager : MonoBehaviour
                 else if(potionID == 4)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo", 0.9f, -1));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     PotionController.stonePotionAmount = 1;
                     PotionController.stonePotionMax = 1;
@@ -316,8 +373,8 @@ public class PotionManager : MonoBehaviour
                 else if(potionID == 5)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     PotionController.strengthPotionAmount = 1;
                     PotionController.strengthPotionMax = 1;
@@ -329,8 +386,8 @@ public class PotionManager : MonoBehaviour
                 else if(potionID == 6)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     PotionController.alacrityPotionAmount = 1;
                     PotionController.alacrityPotionMax = 1;
@@ -342,8 +399,8 @@ public class PotionManager : MonoBehaviour
                 else if(potionID == 7)
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Thank you for your purchase!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     PotionController.intellectPotionAmount = 1;
                     PotionController.intellectPotionMax = 1;
@@ -352,18 +409,19 @@ public class PotionManager : MonoBehaviour
                     button10.GetComponent<PotionUpgrade>().unlocked = true;
                 }
                 alcConfirm.SetActive(false);
-                alcOptions.SetActive(true);
+                //alcOptions.SetActive(true);
                 inUpgrade = false;
                 CheckUnlocks();
             }
             else if(hit.collider != null && hit.collider.tag == "Shop_No")
             {
                 click.Play();
+                shopDialogue.GetComponent<ShopDialogue>().waitingDecision = false;
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo", 0.9f,-1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 alcConfirm.SetActive(false);
-                alcOptions.SetActive(true);
+                //alcOptions.SetActive(true);
                 inUpgrade = false;
                 potionAdd = false;
             }
@@ -444,13 +502,13 @@ public class PotionManager : MonoBehaviour
                 }
 
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Your potion has been upgraded.", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Your potion has been upgraded.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
 
                 UpdatePotions();
                 alcConfirm.SetActive(false);
-                alcOptions.SetActive(true);
+                //alcOptions.SetActive(true);
                 inUpgrade = false;
                 potionAdd = false;
             }
@@ -627,5 +685,98 @@ public class PotionManager : MonoBehaviour
             button10.SetActive(false);
         }
     }
+    void backButton()
+    {
+        GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
+        GameObject.Find("WipeScreen").GetComponent<Animator>().Play("FadeIn");
+        TestCharController.inDialogue = false;
+        playerInv.SetActive(false);
+        alcHUD.SetActive(false);
+    }
 
+    void RefillPotions()
+    {
+        if(!inUpgrade)
+        {
+            GameObject.Find("PotionNoise").GetComponent<AudioSource>().Play();
+            shopDialogue.SetActive(true);
+            shopDialogue.GetComponent<ShopDialogue>().Clear();
+            shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Your potions have been refilled.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Theo", 0.9f, -1));
+            shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
+            PotionController.healthPotionCurrent = PotionController.healthPotionMax;
+            PotionController.manaPotionCurrent = PotionController.manaPotionMax;
+            PotionController.staminaPotionCurrent = PotionController.staminaPotionMax;
+            PotionController.stonePotionCurrent = PotionController.stonePotionMax;
+            PotionController.strengthPotionCurrent = PotionController.strengthPotionMax;
+            PotionController.alacrityPotionCurrent = PotionController.alacrityPotionMax;
+            PotionController.intellectPotionCurrent = PotionController.intellectPotionMax;
+        }
+    }
+
+    void UpPage()
+    {
+        page++;
+        if(page > 1)
+        {
+            page = 1;
+            GameObject.Find("ErrorNoise").GetComponent<AudioSource>().Play();
+        }
+        else
+        {
+            GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
+        }
+        UpdatePage();
+    }
+
+    void DownPage()
+    {
+        page--;
+        if(page < 0)
+        {
+            page = 0;
+            GameObject.Find("ErrorNoise").GetComponent<AudioSource>().Play();
+        }
+        else
+        {
+            GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
+        }
+        UpdatePage();
+    }
+
+    void UpdatePage()
+    {
+        pageText.text = "Page " + (page+1);
+        if (page == 0)
+        {
+            upgrade1.SetActive(true);
+            upgrade2.SetActive(false);
+        }
+        else
+        {
+            upgrade1.SetActive(false);
+            upgrade2.SetActive(true);
+        }
+    }
+
+    void UpdateInv()
+    {
+        for(int i = 0; i < slotList.Count; i++)
+        {
+            Destroy(slotList[i]);
+        }
+        for(int i = 0; i < InventoryManager.playerInventory.Length; i++)
+        {
+            GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Inventory/Alc_Slot"), playerInvPanel.transform);
+            tempObj.transform.Find("Item_IMG").GetComponent<Image>().sprite = Resources.Load<Sprite>("Item/" + InventoryManager.playerInventory[i].itemIconName);
+            if(InventoryManager.playerInventory[i].itemQuantity > 0)
+            {
+                tempObj.transform.Find("Item_Num").GetComponent<Text>().text = InventoryManager.playerInventory[i].itemQuantity.ToString();
+            }
+            else
+            {
+                tempObj.transform.Find("Item_Num").GetComponent<Text>().text = "";
+            }
+            slotList.Add(tempObj);         
+        }
+    }
 }
