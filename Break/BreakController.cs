@@ -39,13 +39,13 @@ public class BreakController : MonoBehaviour
         CheckSkill();
         CheckIcon();
 
-		if(Input.GetKeyDown(KeyCode.Z) && skill1Enabled && !draining)
+		if((Input.GetMouseButton(1) || InputManager.J_Trigger() > 0) && skill1Enabled && !draining)
         {
             GameObject.Find("GenNoise").GetComponent<AudioSource>().Play();
             skill1Icon.GetComponent<Image>().color = new Color32(150, 150, 150, 255);
             StartCoroutine(DrainBreak(100));
         }
-        else if(!Input.GetKey(KeyCode.Z) && skill1Enabled)
+        else if(!Input.GetMouseButton(1) && skill1Enabled)
         {
             skill1Icon.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         }

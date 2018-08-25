@@ -17,7 +17,9 @@ public class ComboCounter : MonoBehaviour
 	void Start ()
     {
         PlayerStats.comboCount = 0;
-	}
+        comboText.gameObject.SetActive(false);
+        StartCoroutine(ComboDrop());
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -65,5 +67,19 @@ public class ComboCounter : MonoBehaviour
         PlayerStats.comboCount = 0;
         comboActive = false;
         comboText.gameObject.SetActive(false);
+    }
+
+    IEnumerator ComboDrop()
+    {
+        while(true)
+        {
+            if (!comboActive && PlayerStats.breakMeter > 0 && PlayerStats.breakMeter != 100 && 
+                PlayerStats.breakMeter != 200 && PlayerStats.breakMeter != 300)
+            {
+                PlayerStats.breakMeter--;
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
     }
 }

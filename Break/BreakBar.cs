@@ -16,6 +16,8 @@ public class BreakBar : MonoBehaviour
 
     public Text breakLevel;
 
+    public GameObject breakReady;
+
     // Use this for initialization
     void Start()
     {
@@ -68,6 +70,7 @@ public class BreakBar : MonoBehaviour
         if(charge1 == 100)
         {
             breakLevel.text = "1";
+            breakReady.SetActive(true);
         }
         if(charge2 == 100)
         {
@@ -80,6 +83,7 @@ public class BreakBar : MonoBehaviour
         if(charge1 < 100)
         {
             breakLevel.text = "0";
+            breakReady.SetActive(false);
         }
     }
         
