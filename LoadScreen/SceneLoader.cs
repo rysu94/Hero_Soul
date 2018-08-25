@@ -30,11 +30,19 @@ public class SceneLoader : MonoBehaviour
         if(isDone)
         {
             loadText.gameObject.GetComponent<LoadText>().isDone = true;
-            loadText.text = "Press Space to Continue.";
+            if(GameController.xbox360Enabled())
+            {
+                loadText.text = "Press A to Continue.";
+            }
+            else
+            {
+                loadText.text = "Press Space to Continue.";
+            }
+            
 
             
 
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space) || InputManager.A_Button())
             {
                 ao.allowSceneActivation = true;
             }

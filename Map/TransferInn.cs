@@ -17,6 +17,13 @@ public class TransferInn : MonoBehaviour
     public Text tutorialTitle;
     public Text tutorialText;
 
+    public string sceneName;
+    public string direction;
+    public float xCoord;
+    public float yCoord;
+
+    public string addAction = "";
+
     // Use this for initialization
     void Start ()
     {
@@ -30,32 +37,29 @@ public class TransferInn : MonoBehaviour
 	}
 
     void OnTriggerEnter2D(Collider2D other)
-    {
+    {     
         if (other.gameObject.tag == "Player")
         {
-            if (InventoryManager.playerEquipment[0].itemID == 8 && InventoryManager.playerEquipment[3].itemID == 9 &&
-                InventoryManager.playerEquipment[5].itemID == 10 && Town_Event_3.start == true)
+            SceneManager.LoadScene(sceneName);
+            LevelCreator.playerStartX = xCoord;
+            LevelCreator.playerStartY = yCoord;
+            LevelCreator.startTag = direction;
+            GameObject.Find("BGM").GetComponent<AudioSource>().clip = normal;
+            GameObject.Find("BGM").GetComponent<AudioSource>().Play();
+            GameObject.Find("BGM").GetComponent<AudioSource>().volume = .1f;
+            if(addAction != "")
             {
-                SceneManager.LoadScene("Town_4");
-                LevelCreator.playerStartX = 1.416f;
-                LevelCreator.playerStartY = .469f;
-                LevelCreator.startTag = "Down";
+                StartCoroutine(addAction);
             }
-            else
-            {
-                StartCoroutine(BackRoutine());
-            }
-
-            
-            if(!Town_Event_3.start)
-            {
-                GameObject.Find("BGM").GetComponent<AudioSource>().clip = normal;
-                GameObject.Find("BGM").GetComponent<AudioSource>().Play();
-                GameObject.Find("BGM").GetComponent<AudioSource>().volume = .1f;
-            }
-
 
         }
+
+    }
+
+    IEnumerator DisableArcana()
+    {
+        TestCharController.arcanaEnabled = false;
+        yield return null;
     }
 
     IEnumerator BackRoutine()
@@ -64,7 +68,7 @@ public class TransferInn : MonoBehaviour
         dialogueIMG.SetActive(true);
 
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I should put on my equipment before I leave.", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I should put on my equipment before I leave.", "Cecilia/Cecilia Grey_thigh_1", "NPC/NPC_None", "NPC/NPC_Veteran", "Cecilia", 1f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         TestCharController.player.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 1);

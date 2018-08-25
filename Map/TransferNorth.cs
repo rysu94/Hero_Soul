@@ -24,7 +24,30 @@ public class TransferNorth : MonoBehaviour
     {
         if(other.gameObject.tag == "Player")
         {
-         
+            //Save items on the ground
+            LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].roomItems.Clear();
+            foreach(GameObject item in FindObjectsOfType<GameObject>())
+            {
+                if(item.GetComponent<CollectItem>())
+                {
+                    LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].roomItems.Add(new WorldItem(
+                        item.transform.position, item.GetComponent<CollectItem>().itemID, GameObject.Find("InventoryController").GetComponent<ItemDatabase>().FindItem(item.GetComponent<CollectItem>().itemID).itemIconName));
+                }
+            }
+
+            //Save Destructibles
+            LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].roomDestructibles.Clear();
+            foreach(GameObject destruct in FindObjectsOfType<GameObject>())
+            {
+                if(destruct.GetComponent<Destruct_Scatter>())
+                {
+                    LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].roomDestructibles.Add(
+                        new WorldDestruct(destruct.transform.position, destruct.GetComponent<Destruct_Scatter>().hitPoints, destruct));
+                }
+            }
+
+
+
             //sets room to explored if it isn't already
             if (!LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].isExplored)
             {

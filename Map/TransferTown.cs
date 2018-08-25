@@ -31,6 +31,7 @@ public class TransferTown : MonoBehaviour
                 SceneManager.LoadScene("World Map");
                 GameObject.Find("BGM").GetComponent<AudioSource>().clip = worldMapBGM;
                 GameObject.Find("BGM").GetComponent<AudioSource>().Play();
+                MapScript.transition = 2;
             }
             else
             {
@@ -38,7 +39,7 @@ public class TransferTown : MonoBehaviour
                 dialogueIMG.SetActive(true);
 
                 dialogueController.GetComponent<DialogueController>().Clear();
-                dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I can't leave town right now!", "Cecilia/Cecilia Grey_thigh_3", "Cecilia", 1f));
+                dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I can't leave town right now!", "Cecilia/Cecilia Grey_thigh_3", "NPC/NPC_None", "NPC/NPC_Veteran", "Cecilia", 1f, -1));
                 dialogueController.GetComponent<DialogueController>().StartDialogue();
 
                 if(TestCharController.player.GetComponent<TestCharController>().north)

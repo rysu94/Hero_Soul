@@ -44,6 +44,12 @@ public class Level
     //Does the level have a boss
     public bool isBoss;
 
+    //Does the level have a shop?
+    public bool shopMade;
+
+    //Does the level have a mosaic?
+    public bool mosaicMade;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -57,7 +63,7 @@ public class Level
 	}
 
     //The Level Class constructor
-    public Level(int row, int col, int type, int crit, int branch, int x, int y, string name, bool boss)
+    public Level(int row, int col, int type, int crit, int branch, int x, int y, string name, bool boss, bool shop)
     {
         levelRow = row;
         levelColumn = col;
@@ -69,5 +75,7 @@ public class Level
         playerX = x;
         playerY = y;
         isBoss = boss;
+        shopMade = shop;
+        mosaicMade = false;
     }
 }

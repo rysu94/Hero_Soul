@@ -1,19 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-Hero Soul: Item Class
-By: Ryan Su
-The item class is the base class that all items will inherit off
-of. Armor and weapons have the additional variables for
-stats such as str and int which will use the virtual functions
-below.
-
-*/
-
-
-
+[Serializable]
 public class Item 
 {
     // Item Name

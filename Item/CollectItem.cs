@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class CollectItem : MonoBehaviour {
 
     public bool isCollecting = false;
     public bool active = false;
+    public bool itemActive = false;
 
     public AudioSource item;
     public SpriteRenderer sprite;
 
     public Rigidbody2D itemRB;
 
-    public int itemID;
+    public int itemID, index;
+
 
 	// Use this for initialization
 	void Start ()
@@ -20,12 +23,15 @@ public class CollectItem : MonoBehaviour {
         item = GetComponent<AudioSource>();
         sprite = GetComponent<SpriteRenderer>();
         StartCoroutine(StartRoutine());
-	}
+
+
+
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if(active)
+        if(active && !GameController.paused)
         {
             //Item Magnetism
             float distanceToPlayer = Vector3.Distance(transform.position, TestCharController.player.transform.position);
@@ -40,13 +46,16 @@ public class CollectItem : MonoBehaviour {
 
     IEnumerator StartRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.1f);
+        itemActive = true;
+
+        yield return new WaitForSeconds(.9f);
         active = true;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Player")
+        if(other.gameObject.tag == "Player" && itemActive && !GameController.paused)
         {
             if(!isCollecting)
             {
@@ -59,15 +68,18 @@ public class CollectItem : MonoBehaviour {
     {
         isCollecting = true;
 
-
         //Arcana Collection
         if (itemID == 1)
         {
             item.Play();
             sprite.color = new Color(1f, 1f, 1f, 0);
             InventoryManager.fireArcana++;
-            yield return new WaitForSeconds(.05f);
-            print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+            yield return new WaitForSeconds(.95f);
+            //print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+
+            //GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            //tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
             Destroy(gameObject);
             yield return null;
         }
@@ -76,8 +88,12 @@ public class CollectItem : MonoBehaviour {
             item.Play();
             sprite.color = new Color(1f, 1f, 1f, 0);
             InventoryManager.waterArcana++;
-            yield return new WaitForSeconds(.05f);
-            print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+            yield return new WaitForSeconds(.95f);
+           // print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+
+            //GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            //tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
             Destroy(gameObject);
             yield return null;
         }
@@ -86,8 +102,12 @@ public class CollectItem : MonoBehaviour {
             item.Play();
             sprite.color = new Color(1f, 1f, 1f, 0);
             InventoryManager.earthArcana++;
-            yield return new WaitForSeconds(.05f);
-            print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+            yield return new WaitForSeconds(.95f);
+            //print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+
+            //GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            //tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
             Destroy(gameObject);
             yield return null;
         }
@@ -96,8 +116,12 @@ public class CollectItem : MonoBehaviour {
             item.Play();
             sprite.color = new Color(1f, 1f, 1f, 0);
             InventoryManager.windArcana++;
-            yield return new WaitForSeconds(.05f);
-            print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+            yield return new WaitForSeconds(.95f);
+            //print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+
+            //GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            //tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
             Destroy(gameObject);
             yield return null;
         }
@@ -106,8 +130,12 @@ public class CollectItem : MonoBehaviour {
             item.Play();
             sprite.color = new Color(1f, 1f, 1f, 0);
             InventoryManager.lifeArcana++;
-            yield return new WaitForSeconds(.05f);
-            print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+            yield return new WaitForSeconds(.95f);
+            //print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+
+            //GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            //tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
             Destroy(gameObject);
             yield return null;
         }
@@ -125,7 +153,12 @@ public class CollectItem : MonoBehaviour {
                 InventoryManager.playerInventory[itemIndex].itemQuantity++;
                 yield return new WaitForSeconds(.05f);
                 print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
+                
+                GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+                tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
                 GameObject.Find("InventoryController").GetComponent<InventoryController>().UpdateInventory();
+
                 Destroy(gameObject);
                 yield return null;
             }
@@ -143,6 +176,10 @@ public class CollectItem : MonoBehaviour {
                     yield return new WaitForSeconds(.05f);
                     print("Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName);
                     GameObject.Find("InventoryController").GetComponent<InventoryController>().UpdateInventory();
+
+                    GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+                    tempObj.GetComponent<Text>().text = "Picked up " + GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[itemID].itemName;
+
                     Destroy(gameObject);
                     yield return null;
                 }

@@ -25,6 +25,6 @@ public class PlayButton : MonoBehaviour
 
     void PlayGame()
     {
-        SceneManager.LoadScene("Forest_1_Start");
+        SceneManager.LoadScene("Char_Select");
     }
 }

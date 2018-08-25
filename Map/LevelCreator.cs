@@ -8,10 +8,7 @@ using UnityEngine;
 Hero Project Level Creator
 By: Ryan Su
 
-This scripts generates the grid which stores the rooms on a level. 
-Algorithm will first generate the "critical path", which is dictated
-by the Level Class, and then generate branches leading to special
-rooms.
+This scripts generates the grid which stores the rooms on a level
 
 */
 
@@ -97,6 +94,16 @@ public class LevelCreator : MonoBehaviour
 
     public static bool startWipe = false;
 
+    public static bool potionEnabled = true;
+    public GameObject potion1;
+    public GameObject potion2;
+
+    public GameObject breakFrame;
+    public static bool breakEnabled = true;
+
+    public bool resetCursor = false;
+
+    public static GameObject nodeGrid;
 
     // Use this for initialization
     void Start()
@@ -111,14 +118,13 @@ public class LevelCreator : MonoBehaviour
             if (levelTag == 0)
             {
                 loadedLevel = LevelDatabase.weiss;
-
                 GenTown(loadedLevel);
             }
 
             else if (levelTag == 1)
             {
                 loadedLevel = LevelDatabase.forestOfBeginning;
-
+                LevelDatabase.forestOfBeginning.shopMade = false;
                 //Call function to generate the level based on loaded level's properties
                 GenLevel(loadedLevel);
             }
@@ -126,9 +132,42 @@ public class LevelCreator : MonoBehaviour
             else if (levelTag == 2)
             {
                 loadedLevel = LevelDatabase.mierMines;
+                LevelDatabase.mierMines.shopMade = false;
                 GenLevel(loadedLevel);
             }
-                    
+
+            else if(levelTag == 3)
+            {
+                playerStartX = -0.571f;
+                playerStartY = 0.153f;
+                startTag = "Right";
+                TestCharController.arcanaEnabled = false;
+                potionEnabled = false;
+                loadedLevel = LevelDatabase.lakesideTraining;
+                GenTown(loadedLevel);
+            }
+            else if(levelTag == 4)
+            {
+                loadedLevel = LevelDatabase.galahadTomb;
+                LevelDatabase.galahadTomb.shopMade = false;
+                GenLevel(loadedLevel);
+            }
+            else if(levelTag == 5)
+            {
+                loadedLevel = LevelDatabase.port;
+                GenTown(loadedLevel);
+            }
+            else if (levelTag == 6)
+            {
+                loadedLevel = LevelDatabase.ceciliaWeiss;
+                GenTown(loadedLevel);
+            }
+            else if (levelTag == 7)
+            {
+                loadedLevel = LevelDatabase.camp;
+                GenTown(loadedLevel);
+            }
+
             //Bring player to the level's start
             SceneManager.LoadScene(levelGrid[playerCurrentX, playerCurrentY].roomName);
             startWipe = true;
@@ -140,11 +179,15 @@ public class LevelCreator : MonoBehaviour
    
 
             //initialize the arcana deck
-            Deck.StartDraw();
-            
+            if(!Deck.init)
+            {
+                Deck.StartDraw();
+            }
 
-            //Change the mouse cursor
-            Cursor.SetCursor((Texture2D)Resources.Load("Cursor"), Vector2.zero, CursorMode.Auto);
+            //Clear the buyback list
+            Shop_Database.ClearBuyback();
+
+
         }
         
 
@@ -168,10 +211,186 @@ public class LevelCreator : MonoBehaviour
             TestCharController.miniMap.SetActive(false);
         }
 
+        //Create the pathing grid
+        nodeGrid = Instantiate(Resources.Load("Prefabs/Pathing/Node_Grid"), new Vector2(0, 0), Quaternion.identity) as GameObject;
+
+        //Spawn Puzzles
+        //Determine which array to use
+
+        //Koros
+        if (levelTag == 1 || levelTag == 4)
+        {
+            //Is it a puzzle?
+            bool isPuzzle = false;
+            int puzzleType = 0;
+            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Puzzle"))
+            {
+                isPuzzle = true;
+                puzzleType = enemy.GetComponent<Puzzle_Spawn>().puzzleType;
+            }
+
+            if (isPuzzle)
+            {
+                switch (puzzleType)
+                {
+                    default:
+                        break;
+                    case 1:
+                        Instantiate(Resources.Load("Prefabs/Puzzles/Mastermind/Mastermind_Puzzle"), new Vector2(0, 0), Quaternion.identity);
+                        break;
+                    case 2:
+                        if ((int)Time.time % 2 > 0)
+                        {
+                            Instantiate(Resources.Load("Prefabs/Puzzles/Runes/Rune_Puzzle"), new Vector2(0, 0), Quaternion.identity);
+                        }
+                        else
+                        {
+                            Instantiate(Resources.Load("Prefabs/Puzzles/Runes/Rune_Puzzle_2"), new Vector2(0, 0), Quaternion.identity);
+                        }
+
+                        break;
+                }
+            }
+
+
+            //Spawn Troop
+            if (!levelGrid[playerCurrentX, playerCurrentY].roomClear && !levelGrid[playerCurrentX, playerCurrentY].isBoss)
+            {
+            //print("Loaded Level " + levelTag);
+            nodeGrid.GetComponent<Path_Nodes>().UpdateNodes();
+
+            //Initialize the troop database
+            if(!Troop_Database.init)
+            {
+                Troop_Database.initTroops();
+                Troop_Database.init = true;
+            }
+            
+           
+
+                bool isBoss = false;
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+                {
+                    if(enemy.GetComponent<Monster>().boss)
+                    {
+                        isBoss = true;
+                    }
+                }
+
+
+                if (!isPuzzle && !isBoss)
+                {
+                    int troopIndex = Random.Range(0, Troop_Database.korosTroop.Length);
+                    for (int i = 0; i < Troop_Database.korosTroop[troopIndex].Length; i++)
+                    {
+                        //Find a valid pathing node
+                        bool valid = false;
+                        int nodeIndex = 0;
+                        int count = 0;
+                        List<int> pickedNodes = new List<int>();
+                        while (!valid && count < 50)
+                        {
+                            nodeIndex = Random.Range(44, 182);
+                            if (nodeGrid.GetComponent<Path_Nodes>().nodeList[nodeIndex].GetComponent<Node>().valid
+                                && nodeIndex != 49 && nodeIndex != 50 && nodeIndex != 51 && nodeIndex != 52 && nodeIndex != 53
+                                && nodeIndex != 58 && nodeIndex != 59 && nodeIndex != 60 && nodeIndex != 61 && nodeIndex != 62 && nodeIndex != 63
+                                && nodeIndex != 64 && nodeIndex != 79 && nodeIndex != 80 && nodeIndex != 81 && nodeIndex != 82 && nodeIndex != 83
+                                && nodeIndex != 83 && nodeIndex != 84 && nodeIndex != 100 && nodeIndex != 101 && nodeIndex != 102 && nodeIndex != 103
+                                && nodeIndex != 104 && nodeIndex != 105 && nodeIndex != 120 && nodeIndex != 121 && nodeIndex != 122 && nodeIndex != 123
+                                && nodeIndex != 124 && nodeIndex != 125 && nodeIndex != 141 && nodeIndex != 142 && nodeIndex != 143 && nodeIndex != 144
+                                && nodeIndex != 145 && nodeIndex != 146 && nodeIndex != 161 && nodeIndex != 162 && nodeIndex != 163 && nodeIndex != 164
+                                && nodeIndex != 165 && nodeIndex != 166 && nodeIndex != 166 && nodeIndex != 172 && nodeIndex != 173 && nodeIndex != 174
+                                && nodeIndex != 175 && nodeIndex != 176 && !pickedNodes.Contains(nodeIndex))
+                            {
+                                valid = true;
+                                pickedNodes.Add(nodeIndex);
+                            }
+                            count++;
+                        }
+
+                        //print("Spawning " + Troop_Database.korosTroop[troopIndex][i]);
+                        if (Troop_Database.korosTroop[troopIndex][i] != "")
+                        {
+                            Instantiate(Troop_Database.GetEnemy(Troop_Database.korosTroop[troopIndex][i]), nodeGrid.GetComponent<Path_Nodes>().nodeList[nodeIndex].transform.position, Quaternion.identity);
+                        }
+                    }
+                }
+                
+            }
+        }
+
+        else if(levelTag == 0)
+        {
+            //Spawn Troop
+            if (!levelGrid[playerCurrentX, playerCurrentY].roomClear && !levelGrid[playerCurrentX, playerCurrentY].isBoss)
+            {
+                //print("Loaded Level " + levelTag);
+                nodeGrid.GetComponent<Path_Nodes>().UpdateNodes();
+
+                //Initialize the troop database
+                if (!Troop_Database.init)
+                {
+                    Troop_Database.initTroops();
+                    Troop_Database.init = true;
+                }
+
+
+
+                bool isBoss = false;
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+                {
+                    if (enemy.GetComponent<Monster>().boss)
+                    {
+                        isBoss = true;
+                    }
+                }
+
+
+                if (!isBoss)
+                {
+                    int troopIndex = Random.Range(0, Troop_Database.weissTroop.Length);
+                    for (int i = 0; i < Troop_Database.weissTroop[troopIndex].Length; i++)
+                    {
+                        //Find a valid pathing node
+                        bool valid = false;
+                        int nodeIndex = 0;
+                        int count = 0;
+                        List<int> pickedNodes = new List<int>();
+                        while (!valid && count < 50)
+                        {
+                            nodeIndex = Random.Range(44, 182);
+                            if (nodeGrid.GetComponent<Path_Nodes>().nodeList[nodeIndex].GetComponent<Node>().valid
+                                && nodeIndex != 49 && nodeIndex != 50 && nodeIndex != 51 && nodeIndex != 52 && nodeIndex != 53
+                                && nodeIndex != 58 && nodeIndex != 59 && nodeIndex != 60 && nodeIndex != 61 && nodeIndex != 62 && nodeIndex != 63
+                                && nodeIndex != 64 && nodeIndex != 79 && nodeIndex != 80 && nodeIndex != 81 && nodeIndex != 82 && nodeIndex != 83
+                                && nodeIndex != 83 && nodeIndex != 84 && nodeIndex != 100 && nodeIndex != 101 && nodeIndex != 102 && nodeIndex != 103
+                                && nodeIndex != 104 && nodeIndex != 105 && nodeIndex != 120 && nodeIndex != 121 && nodeIndex != 122 && nodeIndex != 123
+                                && nodeIndex != 124 && nodeIndex != 125 && nodeIndex != 141 && nodeIndex != 142 && nodeIndex != 143 && nodeIndex != 144
+                                && nodeIndex != 145 && nodeIndex != 146 && nodeIndex != 161 && nodeIndex != 162 && nodeIndex != 163 && nodeIndex != 164
+                                && nodeIndex != 165 && nodeIndex != 166 && nodeIndex != 166 && nodeIndex != 172 && nodeIndex != 173 && nodeIndex != 174
+                                && nodeIndex != 175 && nodeIndex != 176 && !pickedNodes.Contains(nodeIndex))
+                            {
+                                valid = true;
+                                pickedNodes.Add(nodeIndex);
+                            }
+                            count++;
+                        }
+
+                        print("Spawning " + Troop_Database.weissTroop[troopIndex][i]);
+                        if (Troop_Database.weissTroop[troopIndex][i] != "")
+                        {
+                            Instantiate(Troop_Database.GetEnemy(Troop_Database.weissTroop[troopIndex][i]), nodeGrid.GetComponent<Path_Nodes>().nodeList[nodeIndex].transform.position, Quaternion.identity);
+                        }
+                    }
+                }
+
+            }
+        }
+
+
         //Checks if the room has been cleared
         if (levelGrid[playerCurrentX, playerCurrentY].roomClear)
         {
-
             foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
             {
                 enemy.gameObject.SetActive(false);
@@ -182,26 +401,97 @@ public class LevelCreator : MonoBehaviour
         {
             //print("false");
             levelGrid[playerCurrentX, playerCurrentY].enemyList.Clear();
+
             foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
             {
                 levelGrid[playerCurrentX, playerCurrentY].enemyList.Add(enemy);
             }
+
+            /*
+            foreach (GameObject puzzle in GameObject.FindGameObjectsWithTag("Puzzle"))
+            {
+                levelGrid[playerCurrentX, playerCurrentY].enemyList.Add(puzzle);
+            }
+            */
+
             levelGrid[playerCurrentX, playerCurrentY].enemyCount = levelGrid[playerCurrentX, playerCurrentY].enemyList.Count;
         }
 
         isOpen = false;
+
+        //Check if the player has a deck
+        int blankCount = 0;
+        for(int i = 0; i < Deck.deckSize; i++)
+        {
+            if (Deck.playerDeck[i].cardID == 0)
+            {
+                blankCount++;
+            }
+        }
+        if(blankCount >= 15 || !TestCharController.arcanaEnabled)
+        {
+            GameObject.Find("ArcanaFrame").SetActive(false);
+            GameObject.Find("PlayerDeck").SetActive(false);
+        }
+
+        potion1 = GameObject.Find("Heal_Potion");
+        potion2 = GameObject.Find("Mana_Potion");
+        breakFrame = GameObject.Find("Ultimate_Bar_Frame");
+
+        //Spawn Items
+        for(int i = 0; i < levelGrid[playerCurrentX,playerCurrentY].roomItems.Count; i++)
+        {
+            levelGrid[playerCurrentX, playerCurrentY].roomItems[i].SpawnItem();
+        }
+
+        //Move Destructibles
+        for(int i = 0; i < levelGrid[playerCurrentX, playerCurrentY].roomDestructibles.Count; i++)
+        {
+            levelGrid[playerCurrentX, playerCurrentY].roomDestructibles[i].AlignDestructible();
+        }
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!resetCursor)
+        {
+            resetCursor = true;
+            //Change the mouse cursor
+            Cursor.SetCursor((Texture2D)Resources.Load("Cursor"), Vector2.zero, CursorMode.Auto);
+        }
         //Opens the doors if the room has been cleared
         if(levelGrid[playerCurrentX,playerCurrentY].roomClear && !isOpen)
         {
            OpenDoors();
            isOpen = true;
         }
+
+        //Potions enabled?
+        if (!potionEnabled)
+        {
+            potion1.SetActive(false);
+            potion2.SetActive(false);
+        }
+        else if (potionEnabled)
+        {
+            potion1.SetActive(true);
+            potion2.SetActive(true);         
+        }
+
+
+        //Break Enabled?
+        if (!breakEnabled)
+        {
+            breakFrame.SetActive(false);
+        }
+        else
+        {
+            breakFrame.SetActive(true); 
+        }
+
 
         //Set map name
         //mapName.text = loadedLevel.levelName;
@@ -353,10 +643,34 @@ public class LevelCreator : MonoBehaviour
         {
             for(int j = 0; j < gridY; j++)
             {
-                if((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1))
+                //Weiss
+                if((loadedLevel.levelType == 0 || loadedLevel.levelType == 6) && ((i == 0 && j == 1) || (i == 1 && j == 0) || (i == 1 && j == 2) || (i == 2 && j == 1)))
+                {
+                    levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, false, false, false, false, false);
+                }
+                else if(loadedLevel.levelType == 0 && (i == 1 && j == 1))
+                {
+                    levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, false, false, false, false, true);
+                }
+                else if(loadedLevel.levelType == 0)
+                {
+                    levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, false, false, false, false, false);
+                }
+                //Lakeside Training
+                else if(loadedLevel.levelType == 3 && i == 0 && j == 5)
                 {
                     levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, true, false, true, false, false);
                 }
+                else if(loadedLevel.levelType == 3)
+                {
+                    levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, false, false, false, false, false);
+                }
+                //Port Almere
+                else if(loadedLevel.levelType == 5 && (i == 0 && j == 1))
+                {
+                    levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, true, false, true, false, false);
+                }
+
                 else
                 {
                     levelGrid[i, j] = new Room(11, 7, levelType, roomNum, false, false, false, true, false, false);
@@ -472,6 +786,56 @@ public class LevelCreator : MonoBehaviour
         else if (tag == "Down")
         {
             playerAnim.Play("TestDownIdle");
+        }
+
+        //Spawn Companion
+        if(levelTag == 3 || levelTag == 6 || levelTag == 7)
+        {
+            TestCharController.companionID = 0;
+        }
+        SpawnCompanion(tag);
+    }
+    /*=========================================================================
+                               Companion 
+    ===========================================================================*/
+    public void SpawnCompanion(string tag)
+    {
+        switch (TestCharController.companionID)
+        {
+            default:
+                break;
+            case 0:
+                GameObject.Find("Companion_HUD").SetActive(false);
+                break;
+            //Cecilia
+            case 1:
+                break;
+            //Leon
+            case 2:
+                GameObject tempObj = Instantiate(Resources.Load("Prefabs/Companion/Leon_Companion"), new Vector2(player.transform.position.x, player.transform.position.y - .15f), Quaternion.identity) as GameObject;
+                if (tag == "Up")
+                {
+                    tempObj.GetComponent<Animator>().Play("C_Leon_Up_Idle");
+                }
+                else if (tag == "Left")
+                {
+                    tempObj.GetComponent<Animator>().Play("C_Leon_Left_Idle");
+                }
+                else if (tag == "Right")
+                {
+                    tempObj.GetComponent<Animator>().Play("C_Leon_Right_Idle");
+                }
+                else if (tag == "Down")
+                {
+                    tempObj.GetComponent<Animator>().Play("C_Leon_Down_Idle");
+                }
+                break;
+            //Risette
+            case 3:
+                break;
+            //Sparrow
+            case 4:
+                break;
         }
     }
 
