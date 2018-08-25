@@ -39,6 +39,16 @@ public class DamageManager : MonoBehaviour
 		
 	}
 
+    public static void CreateText(string text, GameObject enemy)
+    {
+        GameObject tempObj = Instantiate(Resources.Load("Prefabs/PlayerBattleText")) as GameObject;
+        tempObj.transform.SetParent(GameObject.Find("HUD").transform, false);
+        RectTransform tempRect = tempObj.GetComponent<RectTransform>();
+        tempRect.position = new Vector2(enemy.transform.position.x, enemy.transform.position.y);
+        tempObj.GetComponent<Text>().text = text;
+        tempObj.GetComponent<Text>().color = Color.white;
+    }
+
     public static void PlayerDamage(int damage, GameObject player, bool pure)
     {
         //Reset the combo counter
@@ -53,7 +63,7 @@ public class DamageManager : MonoBehaviour
                 //adds variance based on level
                 int randomDamage = damage + Random.Range(-PlayerStats.playerLevel, PlayerStats.playerLevel);
                 //Get adjusted damage formula
-                adjustedDamage = (randomDamage - (PlayerStats.defense + PlayerStats.defenseBuffBonus));
+                adjustedDamage = (randomDamage - (PlayerStats.defense + PlayerStats.defenseBuffBonus + PlayerStats.enstoneBonus + PlayerStats.defTalent));
                 if (adjustedDamage < 0)
                 {
                     adjustedDamage = 0;
@@ -64,7 +74,7 @@ public class DamageManager : MonoBehaviour
                 adjustedDamage = damage;
             }
 
-            PlayerStats.health -= adjustedDamage;
+
             GameObject tempObj = Instantiate(Resources.Load("Prefabs/PlayerBattleText")) as GameObject;
             tempObj.transform.SetParent(GameObject.Find("HUD").transform, false);
             RectTransform tempRect = tempObj.GetComponent<RectTransform>();
@@ -79,6 +89,32 @@ public class DamageManager : MonoBehaviour
             {
                 tempObj.GetComponent<Text>().text = "Resist";
                 tempObj.GetComponent<Text>().color = Color.white;
+            }
+
+            int evadeChance = Random.Range(0, 100);
+            if (evadeChance < PlayerStats.evaChance && !pure)
+            {
+                tempObj.GetComponent<Text>().text = "Miss!";
+                tempObj.GetComponent<Text>().color = Color.white;
+                adjustedDamage = 0;
+            }
+
+            //Check if there is a shield
+            if(PlayerStats.currentShield > 0 && !pure)
+            {
+                PlayerStats.currentShield -= adjustedDamage;
+            }
+
+            //Check if there is armor
+            else if(PlayerStats.currentArmor > 0 && !pure)
+            {
+                PlayerStats.currentArmor -= adjustedDamage;
+            }
+            else
+            {
+                PlayerStats.health -= adjustedDamage;
+                TestCharController.playerAttack.clip = TestCharController.hurtNoise[Random.Range(0, TestCharController.hurtNoise.Length)];
+                TestCharController.playerAttack.Play();
             }
 
             if (!pure && adjustedDamage > 0)
@@ -100,9 +136,9 @@ public class DamageManager : MonoBehaviour
         float chargeMultiplier = 1;
 
         //Check if it's a crit
-        if (critChance < ((PlayerStats.dexterity + PlayerStats.bonusDEX + PlayerStats.defenseBuffBonus)/ 2))
+        if (critChance < ((PlayerStats.dexterity + PlayerStats.bonusDEX + PlayerStats.dexTalent)/ 2))
         {
-            critMultiplier = 2;
+            critMultiplier = 2 + (PlayerStats.precAmount/100f);
         }
 
         //Get the Player Weapon
@@ -124,7 +160,8 @@ public class DamageManager : MonoBehaviour
             chargeMultiplier += TestCharController.chargeMult;
         }
 
-        playerDamage = (((weaponDamage * chargeMultiplier) * Random.Range(1, 1.5f))) * (1 + ((float)(PlayerStats.strength + PlayerStats.bonusSTR + PlayerStats.strengthBuffBonus)/50f)) * critMultiplier;
+        playerDamage = (((weaponDamage * chargeMultiplier) * Random.Range(1, 1.5f))) * (1 + ((float)(PlayerStats.strength + PlayerStats.bonusSTR + 
+            PlayerStats.strengthBuffBonus + PlayerStats.enfireBuffBonus + PlayerStats.strTalent)/25f)) * critMultiplier;
 
         //Break Modifier (Harrier)
         if (TestCharController.harrierBreak)
@@ -143,11 +180,44 @@ public class DamageManager : MonoBehaviour
         {   
             tempObj.GetComponent<Text>().text = ((int)playerDamage).ToString();
 
+
+            //Check assassin
+            int assassinChance = Random.Range(0, 100);
+            if(assassinChance < PlayerStats.assChance && !enemy.GetComponent<Monster>().boss)
+            {
+                tempObj.GetComponent<Text>().text = "<color=red>9999</color>";
+                playerDamage = 9999;
+                Instantiate(Resources.Load("Prefabs/Soul/Assassinate"), enemy.transform);
+            }
+
+            //Berserk?
+            if (PlayerStats.health <= (PlayerStats.maxHealth * 0.25) && PlayerStats.berserkAmount > 0)
+            {
+                playerDamage *= (PlayerStats.berserkAmount / 100f);
+                tempObj.GetComponent<Text>().text = "<color=red>" + ((int)playerDamage).ToString() + "</color>";
+            }
+
         }
-        else if(critMultiplier == 2)
+        else if(critMultiplier > 1)
         {
             tempObj.GetComponent<Text>().text = ((int)playerDamage).ToString() + "!";
             tempObj.GetComponent<Text>().fontSize = 32;
+
+            //Check assassin
+            int assassinChance = Random.Range(0, 100);
+            if (assassinChance < PlayerStats.assChance && !enemy.GetComponent<Monster>().boss)
+            {
+                tempObj.GetComponent<Text>().text = "<color=red>9999</color>";
+                playerDamage = 9999;
+            }
+
+            //Berserk?
+            if (PlayerStats.health <= (PlayerStats.maxHealth * 0.25) && PlayerStats.berserkAmount > 0)
+            {
+                playerDamage *= (PlayerStats.berserkAmount / 100f);
+                tempObj.GetComponent<Text>().text = "<color=red>" + ((int)playerDamage).ToString() + "!</color>";
+            }
+
         }
 
         //If the damage is resisted
@@ -170,25 +240,91 @@ public class DamageManager : MonoBehaviour
             GameObject.Find("ComboController").GetComponent<ComboCounter>().AddCombo();
         }
 
+        //Leech Chance
+        int leechChance = Random.Range(0, 100);
+        if(leechChance < (PlayerStats.leechChance * 10))
+        {
+            PlayerStats.health += 10;
+            tempObj.transform.Find("SubText").GetComponent<Text>().text += "\n<color=lime>Leech +10</color>";
+            if (PlayerStats.health > PlayerStats.maxHealth)
+            {
+                PlayerStats.health = PlayerStats.maxHealth;
+            }
+        }
 
+        //Plunder Chance
+        if (enemy.GetComponent<Monster>().monsterHealth - playerDamage <= 0)
+        {
+            int plunderChance = Random.Range(0, 100);
+            if (plunderChance < PlayerStats.plundChance * 10)
+            {
+                int gold = Random.Range(15, 50);
+                InventoryManager.playerGold += gold;
+                tempObj.transform.Find("SubText").GetComponent<Text>().text += "\n<color=yellow>Plunder +" + gold + "</color>";
+            }
+        }
+
+        //Twin Chance
+        int twinChance = Random.Range(0, 100);
+        if(twinChance < (PlayerStats.twinChance))
+        {
+            int twinDamage = (int)(playerDamage / 2);
+            tempObj.transform.Find("SubText").GetComponent<Text>().text += "\n<color=white>Twin " + twinDamage + "</color>";
+            playerDamage += twinDamage;
+        }
 
         return (int)playerDamage;
     }
 
-    public static int MagicDamage(float offset, GameObject enemy)
+    public static int MagicDamage(GameObject enemy, int spell)
     {
         //Calculates the Spell Damage
         float playerDamage = 0;
 
-        playerDamage = (spellBase + (PlayerStats.intelligence + PlayerStats.bonusINT + PlayerStats.intelBuffBonus) * 3) * Random.Range(0.8f, 1.2f);
+        playerDamage = (spell * (1 + (PlayerStats.intelligence + PlayerStats.bonusINT + PlayerStats.intelBuffBonus + PlayerStats.intTalent)/50f)) * Random.Range(0.8f, 1.2f);
 
-        GameObject tempObj = Instantiate(Resources.Load("Prefabs/SpellText")) as GameObject;
-        tempObj.transform.SetParent(GameObject.Find("HUD").transform, false);
-        tempObj.GetComponent<Text>().text = ((int)playerDamage).ToString();
-        RectTransform tempRect = tempObj.GetComponent<RectTransform>();
+        bool textFound = false;
+        //Check if battle text exists
+        foreach (GameObject text in GameObject.FindGameObjectsWithTag("Battle_Text"))
+        {
+            if (enemy.GetComponent<Monster>().invulnerable)
+            {
+                playerDamage = 0;
+                text.GetComponent<Text>().text = "Invuln";
+            }
+            else if (text.GetComponent<BattleText>().enemy == enemy)
+            {
+                if(text.GetComponent<RectTransform>().localScale.x < 2)
+                {
+                    text.GetComponent<RectTransform>().localScale = new Vector3(text.GetComponent<RectTransform>().localScale.x + .1f, text.GetComponent<RectTransform>().localScale.y + .1f, 1);
+                }
+                text.GetComponent<Text>().text = (text.GetComponent<BattleText>().damage + (int)playerDamage).ToString();
+                text.GetComponent<BattleText>().damage += (int)playerDamage;
+                textFound = true;
+            }
+        }
 
-        tempRect.position = new Vector2(enemy.transform.position.x + offset, enemy.transform.position.y);
-        
+        if(!textFound)
+        {
+            GameObject tempObj = Instantiate(Resources.Load("Prefabs/SpellText")) as GameObject;
+            tempObj.transform.SetParent(GameObject.Find("HUD").transform, false);
+            tempObj.GetComponent<BattleText>().enemy = enemy;
+
+            if (enemy.GetComponent<Monster>().invulnerable)
+            {
+                playerDamage = 0;
+                tempObj.GetComponent<Text>().text = "Invuln";
+            }
+            else
+            {
+                //print((int)playerDamage);
+                tempObj.GetComponent<BattleText>().damage += (int)playerDamage;
+                tempObj.GetComponent<Text>().text = ((int)playerDamage).ToString();
+            }
+
+            RectTransform tempRect = tempObj.GetComponent<RectTransform>();
+            tempRect.position = new Vector2(enemy.transform.position.x, enemy.transform.position.y);
+        }        
         return (int)playerDamage;
     }
 

@@ -8,16 +8,31 @@ public class GameController : MonoBehaviour
     //Controls whether monsters will be paused
     public static bool paused = false;
 
+    public static bool xbox360_Enabled = false;
 
-	// Use this for initialization
-	void Start ()
+    public static float gameTime;
+
+
+    //Cecilia Tutorial Vars
+
+
+
+
+
+
+
+
+    public static bool xbox360Enabled()
     {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
+        string[] names = Input.GetJoystickNames();
+        //print(names.Length);
+        for (int i = 0; i < names.Length; i++)
+        {
+            if(names[i].Length > 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

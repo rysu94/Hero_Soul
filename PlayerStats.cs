@@ -35,7 +35,14 @@ public class PlayerStats : MonoBehaviour
     //The player's stamina
     public static int maxStamina;
     public static int stamina;
+    public static int staminaRegenBonus = 0;
     bool stamSwitch = false;
+
+    //Armor
+    public static int currentArmor;
+
+    //Shield
+    public static int currentShield;
 
     //The Player's Stats 
 
@@ -43,41 +50,64 @@ public class PlayerStats : MonoBehaviour
     public static int strength;
     public static int bonusSTR;
     public static int strGrowth;
+    public static int strTalent;
 
     //Agility dictates crit chance & modifier
     public static int dexterity;
     public static bool isCrit = false;
     public static int bonusDEX;
     public static int dexGrowth;
+    public static int dexTalent;
 
     //Dictates spell damage
     public static int intelligence;
     public static int bonusINT;
     public static int intGrowth;
+    public static int intTalent;
 
     //Dictates max mana
     //Every 5 wisdom = another mana globe, capped at 12
     public static int wisdom;
     public static int bonusWIS;
     public static int wisGrowth;
+    public static int enwaterBonus;
+    public static int wisTalent;
 
     //Dictates max stamina
     //5 max stamina per point
     public static int endurance;
     public static int bonusEND;
     public static int endGrowth;
+    public static int endTalent;
 
     //Dictates max health
     //5 max health per point
     public static int vitality;
     public static int bonusVIT;
     public static int vitGrowth;
+    public static int vitTalent;
 
     //Player Defense
     public static int defense;
     public static int bonusDEF;
-        
+    public static int enstoneBonus;
+    public static int defTalent;
 
+    //Player Talent stuff
+    public static int leechChance;
+    public static int alcLevel;
+    public static int armAmount;
+    public static int assChance;
+    public static int berserkAmount;
+    public static int collectLevel;
+    public static int deckAdd;
+    public static int evaChance;
+    public static int precAmount;
+    public static int plundChance;
+    public static int shieldAmount;
+    public static int speedAmount;
+    public static int twinChance;
+   
     //Player Damage
     public static int playerDamage;
 
@@ -88,7 +118,7 @@ public class PlayerStats : MonoBehaviour
     public AudioSource manaNoise;
 
     //player level
-    public static int playerLevel;
+    public static int playerLevel = 25;
 
     //Player Experience
     public static int playerEXP;
@@ -103,6 +133,8 @@ public class PlayerStats : MonoBehaviour
     //Buff Bonus stats
     public static int defenseBuffBonus = 0;
     public static int strengthBuffBonus = 0;
+    public static int enfireBuffBonus = 0;
+
     public static int dexBuffBonus = 0;
     public static int intelBuffBonus = 0;
 
@@ -121,7 +153,8 @@ public class PlayerStats : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        if(!initDone)
+        xpBarHUD = GameObject.Find("EXP_Bar");
+        if (!initDone)
         {
             //Player Level
             playerLevel = 1;
@@ -165,6 +198,7 @@ public class PlayerStats : MonoBehaviour
             initDone = true;
         }
         manaNoise = GameObject.Find("ManaNoise").GetComponent<AudioSource>();
+        
 	}
 	
 	// Update is called once per frame
@@ -208,6 +242,36 @@ public class PlayerStats : MonoBehaviour
 
     }
 
+    public static void ResetStats()
+    {
+        //Player Level
+        playerLevel = 1;
+
+        //Player stats
+        strength = 18;
+        dexterity = 16;
+        intelligence = 15;
+        vitality = 20;
+        endurance = 20;
+        wisdom = 15;
+
+        //Stat Growth per level
+        strGrowth = 2;
+        dexGrowth = 1;
+        intGrowth = 1;
+        wisGrowth = 1;
+        endGrowth = 2;
+        vitGrowth = 2;
+
+        //starting stats
+        maxHealth = 100;
+        health = 100;
+        maxMana = 6;
+        mana = 3;
+        maxStamina = 100;
+        stamina = 100;
+    }
+
     //This function handles casting spells
     public void Cast(int cost)
     {
@@ -223,8 +287,8 @@ public class PlayerStats : MonoBehaviour
     IEnumerator RegenStamRountine()
     {
         stamSwitch = true;
-        stamina++;
-        yield return new WaitForSeconds(.05f);
+        stamina ++;
+        yield return new WaitForSeconds(.025f);
         stamSwitch = false;
     }
 
@@ -238,14 +302,18 @@ public class PlayerStats : MonoBehaviour
 
     static void UpdateStats()
     {
-        maxHealth = 5 * (vitality + bonusVIT);
-        maxMana = (wisdom + bonusWIS) / 5;
+        maxHealth = 5 * (vitality + bonusVIT + vitTalent);
+        if(health > maxHealth)
+        {
+            health = maxHealth;
+        }
+        maxMana = (wisdom + bonusWIS + wisTalent) / 5;
         if(maxMana > 12)
         {
             maxMana = 12;
         }
         
-        maxStamina = 5 * (endurance + bonusEND);
+        maxStamina = 5 * (endurance + bonusEND + endTalent);
         if(stamina > maxStamina)
         {
             stamina = maxStamina;
