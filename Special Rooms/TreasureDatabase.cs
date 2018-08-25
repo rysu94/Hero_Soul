@@ -31,6 +31,111 @@ public class TreasureDatabase : MonoBehaviour
     //legendary rarity
     public List<int> legendaryTreasureDropID = new List<int>();
 
+    public void GetBossLootTable(ref Item[] treasureInv, int biome)
+    {
+        //LootTable for Forest of Beginning
+        if (biome == 1)
+        {
+            //Initalize total treasure drop variables
+            itemChance = 100;
+            totalDrops = 0;
+
+            //Initialize the treasure loot table
+            ClearTables();
+
+            //common drops
+            commonTreasureDropItemID.Add(6); //small feather
+            commonTreasureDropItemID.Add(7); //red mushroom
+            commonTreasureDropItemID.Add(37); //Hard Carapace
+
+            //uncommon drops
+            for (int i = 11; i < 17; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 31; i < 37; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 41; i < 47; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 108; i < 114; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 118; i < 124; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 94; i < 100; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+
+            //rare drops
+            for (int i = 17; i < 23; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 47; i < 50; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 114; i < 117; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 124; i < 127; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 100; i < 103; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            //epic
+            for (int i = 23; i < 29; i++)
+            {
+                epicTreasureDropID.Add(i);
+            }
+            for (int i = 50; i < 52; i++)
+            {
+                epicTreasureDropID.Add(i);
+            }
+            //legend
+            legendaryTreasureDropID.Add(52);
+
+
+            while (itemChance > 0)
+            {
+                //Total drops between 1-2
+                itemChance -= Random.Range(5, 15);
+                totalDrops++;
+            }
+
+            print(totalDrops);
+
+            //Assign Item Id's to the treasure inv array based on how many total drops
+            for (int i = 0; i < totalDrops; i++)
+            {
+                List<int> tempList = DetermineItemRarity();
+                treasureInv[i] = GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[tempList[Random.Range(0, tempList.Count)]];
+                if(treasureInv[i].stackable)
+                {
+                    treasureInv[i].itemQuantity = 1;
+                }         
+            }
+            for (int i = totalDrops; i < treasureInv.Length; i++)
+            {
+                int tempInt = Random.Range(1, 6);
+                treasureInv[i] = GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[tempInt];
+            }
+        }
+    }
+
+
     public void GetTreasureLootTable(ref Item[] treasureInv, int biome)
     {
         //LootTable for Forest of Beginning
@@ -46,17 +151,76 @@ public class TreasureDatabase : MonoBehaviour
             //common drops
             commonTreasureDropItemID.Add(6); //small feather
             commonTreasureDropItemID.Add(7); //red mushroom
+            commonTreasureDropItemID.Add(37); //Hard Carapace
+            commonTreasureDropItemID.Add(106); //way boots
+            commonTreasureDropItemID.Add(107); //leather boot
+            commonTreasureDropItemID.Add(117); //leather helm
+            commonTreasureDropItemID.Add(92); //way armor
+            commonTreasureDropItemID.Add(93); //leather armor
 
             //uncommon drops
             for (int i = 11; i < 17; i++)
             {
                 uncommonTreasureDropID.Add(i);
             }
+            for (int i = 31; i < 37; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 41; i < 47; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 108; i < 114; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 118; i < 124; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+            for (int i = 94; i < 100; i++)
+            {
+                uncommonTreasureDropID.Add(i);
+            }
+
+            //rare drops
+            for (int i = 17; i < 23; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 47; i < 50; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 114; i < 117; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 124; i < 127; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 100; i < 103; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            //epic
+            for (int i = 23; i < 29; i++)
+            {
+                epicTreasureDropID.Add(i);
+            }
+            for (int i = 50; i < 52; i++)
+            {
+                epicTreasureDropID.Add(i);
+            }
+            //legend
+            legendaryTreasureDropID.Add(52);
 
             while (itemChance > 0)
             {
                 //Total drops between 1-2
-                itemChance -= Random.Range(50, 151);
+                itemChance -= Random.Range(10, 30);
                 totalDrops++;
             }
 
@@ -67,14 +231,15 @@ public class TreasureDatabase : MonoBehaviour
             {
                 List<int> tempList = DetermineItemRarity();
                 treasureInv[i] = GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[tempList[Random.Range(0, tempList.Count)]];
-                if(treasureInv[i].stackable)
-                {
-                    treasureInv[i].itemQuantity = Random.Range(1, 6);
-                }
-                else
+                if (treasureInv[i].stackable)
                 {
                     treasureInv[i].itemQuantity = 1;
-                }                
+                }
+            }
+            for(int i = totalDrops; i < treasureInv.Length; i++)
+            {
+                int tempInt = Random.Range(1, 6);
+                treasureInv[i] = GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[tempInt];
             }
         }
 
@@ -102,6 +267,22 @@ public class TreasureDatabase : MonoBehaviour
                 itemChance -= Random.Range(50, 151);
                 totalDrops++;
             }
+            //rare drops
+            for (int i = 17; i < 22; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            for (int i = 40; i < 49; i++)
+            {
+                rareTreasureDropID.Add(i);
+            }
+            //epic
+            for (int i = 49; i < 51; i++)
+            {
+                epicTreasureDropID.Add(i);
+            }
+            //legend
+            legendaryTreasureDropID.Add(52);
 
             print(totalDrops);
 
@@ -111,10 +292,6 @@ public class TreasureDatabase : MonoBehaviour
                 List<int> tempList = DetermineItemRarity();
                 treasureInv[i] = GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[tempList[Random.Range(0, tempList.Count)]];
                 if (treasureInv[i].stackable)
-                {
-                    treasureInv[i].itemQuantity = Random.Range(1, 6);
-                }
-                else
                 {
                     treasureInv[i].itemQuantity = 1;
                 }
@@ -141,11 +318,11 @@ public class TreasureDatabase : MonoBehaviour
         while(pickedList.Count == 0)
         {
             int tempInt = Random.Range(1, 101);
-            if(tempInt <= 49)
+            if(tempInt <= 59)
             {
                 pickedList = commonTreasureDropItemID;
             }
-            else if(tempInt > 49 && tempInt <= 84)
+            else if(tempInt > 59 && tempInt <= 84)
             {
                 pickedList = uncommonTreasureDropID;
             }
