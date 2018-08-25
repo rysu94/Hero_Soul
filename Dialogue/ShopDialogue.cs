@@ -7,7 +7,11 @@ public class ShopDialogue : MonoBehaviour
 {
     public Text dialogueText;
     public Text dialogueName;
+
     public Image dialogueIMG;
+    public Image dialogueBackIMG;
+    public Image dialogueNPC;
+
     public Image scrollArrow;
 
     public List<Dialogue> dialogueList = new List<Dialogue>();
@@ -25,6 +29,11 @@ public class ShopDialogue : MonoBehaviour
 
     public float speedFactor;
 
+    //Flag for whether or not the dialogue is done writing
+    public bool dialogueDone = false;
+
+    public bool waitingDecision = false;
+
     // Use this for initialization
     void Start()
     {
@@ -34,7 +43,13 @@ public class ShopDialogue : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButton(1))
+        //Checks if the player wants to skip dialogue
+        if ((Input.GetMouseButtonDown(0)) && !dialogueSkip && !dialogueWait)
+        {
+            dialogueSkip = true;
+        }
+
+        if (Input.GetMouseButton(1))
         {
             speedFactor = 0.25f;
         }
@@ -47,11 +62,18 @@ public class ShopDialogue : MonoBehaviour
     IEnumerator WriteText(List<Dialogue> dialogueList)
     {
         dialogueIMG.gameObject.SetActive(true);
+        dialogueNPC.gameObject.SetActive(true);
+        dialogueBackIMG.gameObject.SetActive(true);
         TestCharController.inDialogue = true;
         for (int i = 0; i < dialogueList.Count; i++)
         {
             scrollArrow.gameObject.SetActive(false);
-            dialogueIMG.sprite = Resources.Load<Sprite>("Faces/" + dialogueList[i].dialogueIMG);
+
+            dialogueIMG.sprite = Resources.Load<Sprite>("Faces/" + dialogueList[i].dialogueForeIMG);
+            dialogueBackIMG.sprite = Resources.Load<Sprite>("Faces/" + dialogueList[i].dialogueBackIMG);
+
+            dialogueNPC.sprite = Resources.Load<Sprite>("Faces/" + dialogueList[i].dialogueNPC);
+
             dialogue = dialogueList[i].dialogueText;
             dialogueText.text = "";
             dialogueName.text = dialogueList[i].dialogueName;
@@ -74,14 +96,32 @@ public class ShopDialogue : MonoBehaviour
                 {
                     yield return new WaitForSeconds(.035f * speedFactor);
                 }
+
+                //check if the dialogue has been skipped.
+                if (dialogueSkip && !dialogueWait)
+                {
+                    dialogueText.text = dialogue;
+                    dialogueSkip = false;
+                    dialogueWait = true;
+                    break;
+                }
+
             }
+
+            yield return new WaitForSeconds(.5f);
             scrollArrow.gameObject.SetActive(true);
-            while (!Input.GetMouseButtonDown(0))
+            while (!Input.GetMouseButtonDown(0) || waitingDecision)
             {
                 yield return null;
             }
+            dialogueWait = false;
+            dialogueSkip = false;
+
         }
+        dialogueNPC.gameObject.SetActive(false);
+        dialogueBackIMG.gameObject.SetActive(false);
         scrollArrow.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void StartDialogue()
@@ -91,7 +131,11 @@ public class ShopDialogue : MonoBehaviour
 
     public void Clear()
     {
-        StopCoroutine(writeText);
+        if(writeText != null)
+        {
+            StopCoroutine(writeText);
+        }
+        
         dialogueList.Clear();
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 Hero Project Deck Class
 By: Ryan Su
 
-This scripts defines the Room class.
+
 
 
 */
@@ -25,14 +25,14 @@ public class Deck : MonoBehaviour
     //The 3 cards that have been drawn from the deck
 
     public static List<Card> activeCards = new List<Card>();
-
+    public static int deckSize = 15;
 
     //Stores the player's arcana deck
-    public static Card[] playerDeck = new Card[15];
+    public static Card[] playerDeck = new Card[35];
     
 
     //Stores which card have been used
-    public static bool[] usedCards = new bool[15];
+    public static bool[] usedCards = new bool[35];
 
     //Indexes of picked cards
     public static List<int> pickedCardIndex = new List<int>();
@@ -63,22 +63,39 @@ public class Deck : MonoBehaviour
         if (!init)
         {
             //fills player deck with blanks if player deck is empty
+            for(int i = 0; i < playerDeck.Length; i++)
+            {
+                playerDeck[i] = (CardDatabase.arcana_Blank);
+            }
+
+            
+            int tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
             for (int i = 0; i < 5; i++)
             {
-                playerDeck[i] = CardDatabase.arcana_FireBolt;
+                //tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
+                //playerDeck[i] = GameObject.Find("CardData").GetComponent<CardDatabase>().cardData[tempInt];
+                //playerDeck[i] = CardDatabase.arcana_FireBolt;
+                //playerDeck[i] = (CardDatabase.arcana_Blank);
             }
+            //tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
             for (int i = 5; i < 10; i++)
             {
-                playerDeck[i] = CardDatabase.arcana_Embers;
+                //tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
+                //playerDeck[i] = GameObject.Find("CardData").GetComponent<CardDatabase>().cardData[tempInt];
+                //playerDeck[i] = CardDatabase.arcana_Embers;
+                //playerDeck[i] = (CardDatabase.arcana_Blank);
             }
+            //tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
             for (int i = 10; i < 15; i++)
             {
-                playerDeck[i] = CardDatabase.arcana_Blaze;
+                //tempInt = Random.Range(1, GameObject.Find("CardData").GetComponent<CardDatabase>().cardData.Count);
+                //playerDeck[i] = GameObject.Find("CardData").GetComponent<CardDatabase>().cardData[tempInt];
+                //playerDeck[i] = CardDatabase.arcana_Blaze;
+                //playerDeck[i] = (CardDatabase.arcana_Blank);
             }
-
-
+            
             //initialize the used cards array
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 35; i++)
             {
                 usedCards[i] = false;
             }
@@ -107,7 +124,7 @@ public class Deck : MonoBehaviour
             bool isValid = false;
             while(!isValid)
             {
-                tempInt = Random.Range(0, 15);
+                tempInt = Random.Range(0, deckSize);
                 if(!pickedCardIndex.Contains(tempInt))
                 {
                     //print(tempInt);
@@ -116,7 +133,9 @@ public class Deck : MonoBehaviour
                 pickedCardIndex.Add(tempInt);
                 activeCards[i] = playerDeck[tempInt];
             }
+            
         }
+        //cardsLeft = deckSize-3;
         //print(pickedCardIndex[0] + " " + pickedCardIndex[1] + " " + pickedCardIndex[2]);
     }
 
@@ -130,7 +149,11 @@ public class Deck : MonoBehaviour
         {
             usedCards[i] = false;
         }
-        cardsLeft = 15;
+        cardsLeft = deckSize;
+        StartDraw();
+
+        GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+        tempObj.GetComponent<Text>().text = "<color=#00ff00ff>Arcana Refreshed.</color>";
     }
 
     //replaces 1 card use when a card is used
@@ -139,7 +162,7 @@ public class Deck : MonoBehaviour
         //Create a list of valid cards
         List<int> tempList = new List<int>();
         //string tempString = "";
-        for(int i = 0; i < 15; i++)
+        for(int i = 0; i < deckSize; i++)
         {
             if(usedCards[i] == false && i != pickedCardIndex[0] && i != pickedCardIndex[1] && i != pickedCardIndex[2])
             {
@@ -152,7 +175,7 @@ public class Deck : MonoBehaviour
         {
             int tempInt = Random.Range(0, tempList.Count);
             activeCards.Add(playerDeck[tempList[tempInt]]);
-            //print("Added: " + tempList[tempInt]);
+            //print("Added: " + playerDeck[tempList[tempInt]].cardName);
             pickedCardIndex.RemoveAt(x - 1);
             pickedCardIndex.Add(tempList[tempInt]);
         }
@@ -160,12 +183,42 @@ public class Deck : MonoBehaviour
         {
             activeCards.Add(CardDatabase.arcana_Blank);
         }
+
         
     }
 
     //Replaces all 3 cards when shuffle ability is used
-    void Shuffle()
+    public static void Shuffle(int x)
     {
+        //Create a list of valid cards
+        List<int> tempList = new List<int>();
+        //string tempString = "";
+        for (int i = 0; i < deckSize; i++)
+        {
+            if (usedCards[i] == false && i != pickedCardIndex[0] && i != pickedCardIndex[1] && i != pickedCardIndex[2])
+            {
+                tempList.Add(i);
+                //tempString += i + " ";
+            }
+        }
+        //print(tempString);
+        if(tempList.Count > 0)
+        {
+            int tempInt = Random.Range(0, tempList.Count);
+            pickedCardIndex[x - 1] = tempList[tempInt];
+            activeCards[x - 1] = playerDeck[tempList[tempInt]];
+
+            GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            tempObj.GetComponent<Text>().text = "Redrew <color=yellow>" + activeCards[x - 1].cardName + "</color>";
+        }
+        else
+        {
+            GameObject.Find("ErrorNoise").GetComponent<AudioSource>().Play();
+            GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Console Output"), GameObject.Find("Console").transform, false);
+            tempObj.GetComponent<Text>().text = "<color=red>No Cards to Redraw.</color>";
+        }
+
+
 
     }
 
@@ -176,7 +229,11 @@ public class Deck : MonoBehaviour
         usedCards[pickedCardIndex[x - 1]] = true;
         activeCards.RemoveAt(x - 1);
         ReplaceCard(x);
-        cardsLeft--;
+        if(cardsLeft > 0)
+        {
+            cardsLeft--;
+        }
+            
         //print(pickedCardIndex[0] + " " + pickedCardIndex[1] + " " + pickedCardIndex[2]);
 
     }
