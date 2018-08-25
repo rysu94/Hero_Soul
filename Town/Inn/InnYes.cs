@@ -38,7 +38,7 @@ public class InnYes : MonoBehaviour
                 else
                 {
                     shopDialogue.GetComponent<ShopDialogue>().Clear();
-                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Sorry you don't have enough Gold.", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+                    shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Sorry you don't have enough Gold.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
                     shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                     shopChoices.SetActive(true);
                     restChoices.SetActive(false);
@@ -54,7 +54,7 @@ public class InnYes : MonoBehaviour
         click.Play();
         buttonAnim.Play("Button");
         shopDialogue.GetComponent<ShopDialogue>().Clear();
-        shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Excellent choice, right this way.", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+        shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Excellent choice, right this way.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
         shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
         yield return new WaitForSeconds(1.5f);
         wipeScreen.GetComponent<Animator>().Play("FadeOut");

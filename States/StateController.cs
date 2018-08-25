@@ -21,6 +21,12 @@ public class StateController : MonoBehaviour
     public Text stackText;
     public int stateTick;
 
+    public GameObject tempObj;
+
+    public string stateName;
+    public string stateType;
+    public string stateDesc;
+
     // Use this for initialization
     void Start()
     {
@@ -38,6 +44,62 @@ public class StateController : MonoBehaviour
         {
             stackText.text = "";
         }
+        UpdateTooltip();
+    }
+
+    public void UpdateTooltip()
+    {
+        if(stateName == "Alacrity")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increases your dexterity by <color=lime>" + PotionController.alacrityPotionAmount * 5 + "</color>.";
+        }
+        else if(stateName == "Stoneskin")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increases your armor by <color=lime>" + PotionController.stonePotionAmount * 10 + "</color>.";
+        }
+        else if (stateName == "Enfire")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increases your strength by <color=lime>" + (int)(PlayerStats.strength * (0.25f * stackSize)) + "</color>(25% Base).";
+        }
+        else if (stateName == "Enliven")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Regenerate <color=lime>" + (stackSize * 5) + "</color> stamina every 3 seconds.";
+        }
+        else if (stateName == "Enstone")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increase your armor by <color=lime>" + (int)(PlayerStats.defense * (0.5f * stackSize)) + "</color>(50% Base).";
+        }
+        else if (stateName == "Enwater")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Regenerate 1 mana every <color=lime>" + (8 - stackSize) + "</color> seconds.";
+        }
+        else if (stateName == "Intellect Up")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increase your intellect by <color=lime>" + (PotionController.intellectPotionAmount * 10) + "</color>.";
+        }
+        else if (stateName == "Poison")
+        {
+            stateType = "Debuff x" + stackSize;
+            stateDesc = "Deals <color=red>" + (5 * stackSize) + "</color> damage every 5 seconds.";
+        }
+        else if (stateName == "Strength Up")
+        {
+            stateType = "Buff x" + stackSize;
+            stateDesc = "Increase your strength by <color=lime>" + (PotionController.strengthPotionAmount * 10) + "</color>.";
+        }
+        else if (stateName == "Swiftness")
+        {
+            stateDesc = "Increase your movement speed by <color=lime>25%</color>.";
+        }
+
+
     }
 
     //Manages the remaining duration of the state
@@ -114,5 +176,10 @@ public class StateController : MonoBehaviour
             }
         }
 
+    }
+
+    public void DestroyIcon()
+    {
+        Destroy(tempObj);
     }
 }

@@ -30,7 +30,7 @@ public class InnNo : MonoBehaviour
             if (hit.collider != null && hit.collider.tag == "Shop_No" && !isClicked)
             {
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("How can I help you?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("How can I help you?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 shopChoices.SetActive(true);
                 restChoices.SetActive(false);

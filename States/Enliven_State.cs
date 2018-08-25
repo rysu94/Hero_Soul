@@ -2,24 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Poison : StateController
+public class Enliven_State : StateController
 {
-    public GameObject poisonPrefab;
 
-    // Use this for initialization
-    void Start ()
+	// Use this for initialization
+	void Start ()
     {
         StartCoroutine(StateDecayRoutine());
-        StartCoroutine(PoisonTickRoutine());
-	}
-	
-    //The Damage the poison state does, does more if the stack is higher
-    IEnumerator PoisonTickRoutine()
+        StartCoroutine(EnlivenTickRoutine());
+    }
+
+    IEnumerator EnlivenTickRoutine()
     {
-        if(tempObj == null)
-        {
-            tempObj = Instantiate(poisonPrefab, GameObject.Find("Player_States_Panel").transform);
-        }
+        PlayerStats.staminaRegenBonus = stackSize;
         while (stateTime > 0)
         {
             //Check if the object is paused
@@ -29,16 +24,22 @@ public class Poison : StateController
             }
 
             yield return new WaitForSeconds(1f);
+
             StateManager.playerStates[stateIndex].stateTick++;
             stateTick = StateManager.playerStates[stateIndex].stateTick;
-            if (stateTick == 5)
+            if (stateTick == 3)
             {
-                DamageManager.PlayerDamage(5 * stackSize, TestCharController.player.gameObject, true);
+                PlayerStats.stamina += stackSize*5;
                 StateManager.playerStates[stateIndex].stateTick = 0;
-            }    
+                if (PlayerStats.stamina > PlayerStats.maxStamina)
+                {
+                    PlayerStats.stamina = PlayerStats.maxStamina;
+                }
+            }
         }
-        Destroy(tempObj);
-    }
 
+        PlayerStats.staminaRegenBonus = 0;
+
+    }
 
 }

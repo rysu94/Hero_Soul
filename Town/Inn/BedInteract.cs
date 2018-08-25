@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class BedInteract : MonoBehaviour
@@ -9,6 +10,13 @@ public class BedInteract : MonoBehaviour
     public GameObject interactText;
     public bool textMade = false;
 
+    public GameObject fadeOut;
+    public bool fading = false;
+    public AudioClip bgm;
+
+    public string sceneName;
+    public float playerX, playerY;
+    public string startTag;
 
     // Use this for initialization
     void Start ()
@@ -31,5 +39,31 @@ public class BedInteract : MonoBehaviour
             Destroy(interactText);
             textMade = false;
         }
+        if (distance < .5 && Input.GetKeyDown(KeyCode.F) && !fading)
+        {
+            StartCoroutine(HeroSoulFade());
+        }
+
+    }
+
+    IEnumerator HeroSoulFade()
+    {
+        fading = true;
+        TestCharController.inDialogue = true;
+        fadeOut.GetComponent<Animator>().Play("FadeOut");
+        yield return new WaitForSeconds(4f);
+
+        Soul_Controller.bgm = GameObject.Find("BGM").GetComponent<AudioSource>().clip;
+
+        GameObject.Find("BGM").GetComponent<AudioSource>().clip = bgm;
+        GameObject.Find("BGM").GetComponent<AudioSource>().Play();
+
+        SceneManager.LoadScene("HeroSoul");
+        Soul_Controller.sceneName = sceneName;
+        Soul_Controller.playerX = playerX;
+        Soul_Controller.playerY = playerY;
+        Soul_Controller.startTag = startTag;
+
+        TestCharController.inDialogue = false;
     }
 }

@@ -28,8 +28,8 @@ public class AlcTalk : MonoBehaviour
                 buttonAnim.Play("Button");
                 click.Play();
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Are you new to Alchemy? If you are, you should learn. Alchemy is a truly useful thing to learn. It allows you to create and upgrade potions.", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Anyways, how can I help you?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Are you new to Alchemy? If you are, you should learn. Alchemy is a truly useful thing to learn. It allows you to create and upgrade potions.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Shopkeeper",0.9f,-1));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Anyways, how can I help you?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Shopkeeper",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
             }
         }

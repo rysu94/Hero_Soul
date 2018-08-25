@@ -32,6 +32,21 @@ public class StateManager : MonoBehaviour
     //Dazed state prefab
     public GameObject dazedIcon;
 
+    //Enfire state prefab
+    public GameObject enfireIcon;
+
+    //Enliven state Icon
+    public GameObject enlivenIcon;
+
+    //Enstone state Icon
+    public GameObject enstoneIcon;
+
+    //Enwater state Icon
+    public GameObject enwaterIcon;
+
+    //Bless state icon
+    public GameObject blessIcon;
+
 
 	// Use this for initialization
 	void Start ()
@@ -138,6 +153,26 @@ public class StateManager : MonoBehaviour
         {
             returnState = dazedIcon;
         }
+        else if(id == 8)
+        {
+            returnState = enfireIcon;
+        }
+        else if(id == 9)
+        {
+            returnState = enlivenIcon;
+        }
+        else if(id == 10)
+        {
+            returnState = enstoneIcon;
+        }
+        else if(id == 11)
+        {
+            returnState = enwaterIcon;
+        }
+        else if(id == 12)
+        {
+            returnState = blessIcon;
+        }
         return returnState;
     }
 
@@ -146,7 +181,12 @@ public class StateManager : MonoBehaviour
         //Remove all states objects
         foreach(Transform child in stateFrame.transform)
         {
+            if(child.GetComponent<StateController>().tempObj != null)
+            {
+                child.GetComponent<StateController>().DestroyIcon();
+            }
             Destroy(child.gameObject);
+
         }
 
         //Instantiate the states
@@ -162,6 +202,7 @@ public class StateManager : MonoBehaviour
                 tempObj.GetComponent<StateController>().stateIndex = i;
                 tempObj.GetComponent<StateController>().stackSize = playerStates[i].stackSize;
                 tempObj.GetComponent<StateController>().stateTick = playerStates[i].stateTick;
+
             }
         }
     }

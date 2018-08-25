@@ -32,7 +32,7 @@ public class AlcUpgrade : MonoBehaviour
                 buttonAnim.Play("Button");
                 click.Play();
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Good choice, what would you like to do?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Good choice, what would you like to do?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Alc", "Shopkeeper",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 shopUpgrade.SetActive(true);
                 shopCustom.SetActive(false);

@@ -34,8 +34,8 @@ public class AlcRefill : MonoBehaviour
                 click.Play();
                 RefreshPotion();
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Your potions have been refilled.", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Your potions have been refilled.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Can I help you with anything else?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 alcConfirm.SetActive(false);
                 PotionManager.inUpgrade = false;

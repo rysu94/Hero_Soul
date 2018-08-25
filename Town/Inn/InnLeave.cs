@@ -44,7 +44,7 @@ public class InnLeave : MonoBehaviour
         click.Play();
         shopDialogue.SetActive(true);
         shopDialogue.GetComponent<ShopDialogue>().Clear();
-        shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Come again!", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+        shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Come again!", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
         shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
         yield return new WaitForSeconds(1.5f);
         wipeScreen.GetComponent<Animator>().Play("FadeIn");

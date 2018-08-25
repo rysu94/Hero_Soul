@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Strength : StateController {
+public class Bless : StateController
+{
 
-    // Use this for initialization
-    void Start()
+	// Use this for initialization
+	void Start ()
     {
         StartCoroutine(StateDecayRoutine());
-        StartCoroutine(StrengthTickRoutine());
+        StartCoroutine(BlessTickRoutine());
     }
 
-    IEnumerator StrengthTickRoutine()
+    IEnumerator BlessTickRoutine()
     {
-        PlayerStats.strengthBuffBonus = (PotionController.strengthPotionAmount * 10);
+        TestCharController.breakInvuln = true;
         while (stateTime > 0)
         {
             //Check if the object is paused
@@ -24,6 +25,8 @@ public class Strength : StateController {
 
             yield return new WaitForSeconds(1f);
         }
-        PlayerStats.strengthBuffBonus = 0;
+        TestCharController.breakInvuln = false;
     }
+
+
 }

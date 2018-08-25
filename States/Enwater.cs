@@ -2,24 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Poison : StateController
+public class Enwater : StateController
 {
-    public GameObject poisonPrefab;
 
-    // Use this for initialization
-    void Start ()
+	// Use this for initialization
+	void Start ()
     {
         StartCoroutine(StateDecayRoutine());
-        StartCoroutine(PoisonTickRoutine());
-	}
+        StartCoroutine(EnwaterTickRoutine());
+    }
 	
-    //The Damage the poison state does, does more if the stack is higher
-    IEnumerator PoisonTickRoutine()
+    IEnumerator EnwaterTickRoutine()
     {
-        if(tempObj == null)
-        {
-            tempObj = Instantiate(poisonPrefab, GameObject.Find("Player_States_Panel").transform);
-        }
+        PlayerStats.enwaterBonus = stackSize;
         while (stateTime > 0)
         {
             //Check if the object is paused
@@ -29,16 +24,21 @@ public class Poison : StateController
             }
 
             yield return new WaitForSeconds(1f);
+
             StateManager.playerStates[stateIndex].stateTick++;
             stateTick = StateManager.playerStates[stateIndex].stateTick;
-            if (stateTick == 5)
+            if (stateTick == (8 - PlayerStats.enwaterBonus))
             {
-                DamageManager.PlayerDamage(5 * stackSize, TestCharController.player.gameObject, true);
+                GameObject.Find("ManaNoise").GetComponent<AudioSource>().Play();
+                PlayerStats.mana++;
                 StateManager.playerStates[stateIndex].stateTick = 0;
-            }    
+                if (PlayerStats.mana > PlayerStats.maxMana)
+                {
+                    PlayerStats.mana = PlayerStats.maxMana;
+                }
+            }
         }
-        Destroy(tempObj);
+
+        PlayerStats.enwaterBonus = 0;
     }
-
-
 }

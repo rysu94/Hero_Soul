@@ -33,7 +33,7 @@ public class AlcCustom : MonoBehaviour
                 buttonAnim.Play("Button");
                 click.Play();
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Right this way.", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Right this way.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
                 shopUpgrade.SetActive(false);
                 shopCustom.SetActive(true);

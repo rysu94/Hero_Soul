@@ -15,8 +15,20 @@ public class Dazed : StateController
 
     IEnumerator DazeTickRoutine()
     {
-        GameObject tempObj = Instantiate(dazedPrefab, GameObject.Find("Player_States_Panel").transform);
+        tempObj = Instantiate(dazedPrefab, GameObject.Find("Player_States_Panel").transform);
         TestCharController.inDialogue = true;
+
+
+        if(TestCharController.player.GetComponent<TestCharController>().south)
+            TestCharController.player.GetComponent<Animator>().Play("Weak_Down");
+        if (TestCharController.player.GetComponent<TestCharController>().north)
+            TestCharController.player.GetComponent<Animator>().Play("Weak_Up");
+        if (TestCharController.player.GetComponent<TestCharController>().west)
+            TestCharController.player.GetComponent<Animator>().Play("Weak_Left");
+        if (TestCharController.player.GetComponent<TestCharController>().east)
+            TestCharController.player.GetComponent<Animator>().Play("Weak_Right");
+
+
         while (stateTime > 0)
         {
             //Check if the object is paused

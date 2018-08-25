@@ -59,7 +59,7 @@ public class Door_Interact : MonoBehaviour
             TestCharController.inDialogue = true;
             shopkeeperName.text = "Innkeeper";
             shopDialogue.GetComponent<ShopDialogue>().dialogueList.Clear();
-            shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Welcome to the Inn! What can I do for you?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+            shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Welcome to the Inn! What can I do for you?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
             shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
         }
         //store processing, Alc
@@ -71,7 +71,7 @@ public class Door_Interact : MonoBehaviour
             TestCharController.inDialogue = true;
             shopkeeperName.text = "Alchemist";
             alcDialogue.GetComponent<ShopDialogue>().dialogueList.Clear();
-            alcDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Welcome to my shop! How can I help you?", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
+            alcDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Welcome to my shop! How can I help you?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
             alcDialogue.GetComponent<ShopDialogue>().StartDialogue();
         }
 

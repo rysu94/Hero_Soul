@@ -27,8 +27,8 @@ public class InnTalk : MonoBehaviour
                 buttonAnim.Play("Button");
                 click.Play();
                 shopDialogue.GetComponent<ShopDialogue>().Clear();
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("You look new. I may not look it, but I used to be an adventurer like you. Let me give you a tip, make sure to periodically rest at inns to remove fatigue. Besides you'll be well rested afterwords. Take care of your body that's what I always say.", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f));
-                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Anyways, how can I help you?", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("You look new. I may not look it, but I used to be an adventurer like you. Let me give you a tip, make sure to periodically rest at inns to remove fatigue. Besides you'll be well rested afterwords. Take care of your body that's what I always say.", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper", 0.9f, -1));
+                shopDialogue.GetComponent<ShopDialogue>().dialogueList.Add(new Dialogue("Anyways, how can I help you?", "Cecilia/Cecilia Grey_thigh_1", "Leon/Leon Klein_thigh_1", "NPC/NPC_Shopkeeper", "Shopkeeper",0.9f, -1));
                 shopDialogue.GetComponent<ShopDialogue>().StartDialogue();
             }
         }
