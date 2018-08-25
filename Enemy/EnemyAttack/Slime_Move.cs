@@ -44,6 +44,21 @@ public class Slime_Move : MonoBehaviour
             dir = GetAngle(330);
             slime5.GetComponent<Rigidbody2D>().velocity = dir * 1.5f;
         }
+
+        //Check if the slime quest is active
+        for(int i = 0; i < QuestManager.activeSideQuests.Count; i++)
+        {
+            if(QuestManager.activeSideQuests[i].questName == "Slime Hunter I")
+            {
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Quest_Listener"))
+                {
+                    if (enemy.GetComponent<Slime_Hunter_Listener>())
+                    {
+                        enemy.GetComponent<Slime_Hunter_Listener>().UpdateSlime();
+                    }
+                }
+            }
+        }
 	}
 	
 	// Update is called once per frame

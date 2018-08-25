@@ -131,7 +131,7 @@ public class CountController : Monster
         dialogue.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogue.GetComponent<DialogueController>().Clear();
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Enough! I grow tired of this. It's time to end our dance.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Enough! I grow tired of this. It's time to end our dance.", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogue.GetComponent<DialogueController>().StartDialogue();
         while (!dialogue.GetComponent<DialogueController>().dialogueDone)
         {
@@ -143,8 +143,8 @@ public class CountController : Monster
         dialogue.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogue.GetComponent<DialogueController>().Clear();
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I will, however, commend you for getting this far.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("My body, it won't move.", "Cecilia/Cecilia Grey_thigh_6", "Cecilia", 1f));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I will, however, commend you for getting this far.", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("My body, it won't move.", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Cecilia", 1f, -1));
         dialogue.GetComponent<DialogueController>().StartDialogue();
         while (!dialogue.GetComponent<DialogueController>().dialogueDone)
         {
@@ -176,8 +176,8 @@ public class CountController : Monster
         dialogue.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogue.GetComponent<DialogueController>().Clear();
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Damn...", "Cecilia/Cecilia Grey_thigh_6", "Cecilia", 1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku... Your face warped in pain... MARVELOUS.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Damn...", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Cecilia", 1f, -1));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku... Your face warped in pain... MARVELOUS.", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogue.GetComponent<DialogueController>().StartDialogue();
         while (!dialogue.GetComponent<DialogueController>().dialogueDone)
         {
@@ -193,9 +193,9 @@ public class CountController : Monster
         dialogue.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogue.GetComponent<DialogueController>().Clear();
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("T-this is bad... I just might...", "Cecilia/Cecilia Grey_thigh_6", "Cecilia", 1));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Adieu, we won't meet again.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Everythings going dark...", "Cecilia/Cecilia Grey_thigh_6", "Cecilia", 1f));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("T-this is bad... I just might...", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Cecilia", 1, -1));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Adieu, we won't meet again.", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Everythings going dark...", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Cecilia", 1f, -1));
         dialogue.GetComponent<DialogueController>().StartDialogue();
         while (!dialogue.GetComponent<DialogueController>().dialogueDone)
         {
@@ -218,14 +218,7 @@ public class CountController : Monster
         dialogue.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogue.GetComponent<DialogueController>().Clear();
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("What's happening? The pain... it's gone. What happened to the fight? Where am I?", "Cecilia/Cecilia Grey_thigh_2", "Cecilia", 1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("You exist on the border of life and death.", "NPC/NPC_None", "???", 1.1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Death? Then, you saved me?", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I have only saved you for the time being, but your real body and the town are still in danger.", "NPC/NPC_None", "???", 1.1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Then I have to go back! As a junior member of the Guild it is my duty to protect.", "Cecilia/Cecilia Grey_thigh_3", "Cecilia", 1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I can bring you back, but answer this. Why do you fight?", "NPC/NPC_None", "???", 1.1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("That's east, I fight becuase I want to be a hero!", "Cecilia/Cecilia Grey_thigh_7", "Cecilia", 1f));
-        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I see. It appears I was right to save you...", "NPC/NPC_None", "???", 1.1f));
+        dialogue.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("What's happening? The pain... it's gone. What happened to the fight? Where am I?", "Cecilia/Cecilia Grey_thigh_6", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Cecilia", 1f, -1));
         dialogue.GetComponent<DialogueController>().StartDialogue();
         while (!dialogue.GetComponent<DialogueController>().dialogueDone)
         {

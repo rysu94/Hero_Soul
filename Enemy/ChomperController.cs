@@ -15,6 +15,8 @@ public class ChomperController : Monster
 	// Use this for initialization
 	void Start ()
     {
+        monsterName = "Chomper";
+
         monsterHealth = 100;
         contactDamage = 10;
         physicalResist = true;
@@ -33,6 +35,8 @@ public class ChomperController : Monster
 
         experienceDrop = 10;
 
+        colNoise = GetComponent<AudioSource>().clip;
+
         StartCoroutine(StartBehavior());
         StartCoroutine(OpenMaw());
     }
@@ -48,17 +52,16 @@ public class ChomperController : Monster
         while(monsterHealth > 0)
         {
             //check if the monster is paused
-            while(GameController.paused)
+            while(GameController.paused || frozen)
             {
                 yield return null;
             }
 
             yield return new WaitForSeconds(2f);
             float distance = Vector2.Distance(transform.position, TestCharController.player.transform.position);
-            if(distance < 1f)
+            if(distance < 1.5f)
             {
-                Instantiate(chomper_Attack, new Vector2(TestCharController.player.transform.position.x,
-                    TestCharController.player.transform.position.y - .15f), Quaternion.identity);
+                Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/EnemyAttack/Chomper_Telegraph"), transform);
             }
         }
     }

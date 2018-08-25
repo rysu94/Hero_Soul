@@ -12,7 +12,6 @@ This class holds the unique behaviors of the mushy enemy, including animations a
 
 public class MushyController : Monster
 {
-
     //Mushy animation controller
     public Animator mushyController;
 
@@ -27,6 +26,8 @@ public class MushyController : Monster
 	// Use this for initialization
 	void Start ()
     {
+        monsterName = "Mushy";
+
         monsterHealth = 50;
         contactDamage = 10;
 
@@ -40,19 +41,19 @@ public class MushyController : Monster
 
         //Red Mushroom
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[7]);
-        monsterDropChance.Add(25);
+        monsterDropChance.Add(250);
         //Mighty Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[11]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Nimble Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[12]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Might
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[31]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Agility
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[32]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
 
         //Arcana [fire, water, earth, air, life]
         arcanaDrop.Add(0);
@@ -63,6 +64,8 @@ public class MushyController : Monster
 
         //experience drop
         experienceDrop = 15;
+
+        colNoise = GetComponent<AudioSource>().clip;
     }
 	
 	// Update is called once per frame
@@ -70,7 +73,7 @@ public class MushyController : Monster
     {
 
         //Check if enemies are paused
-        if(!GameController.paused)
+        if(!GameController.paused && !frozen)
         {
             if (!isChecking)
             {
@@ -149,7 +152,7 @@ public class MushyController : Monster
         angle += 15;
         //Instantiate(Resources.Load("Prefabs/Enemies/EnemyAttack/Spore_Mushy"), transform.position, Quaternion.Euler(0,0,15));
         //Instantiate(Resources.Load("Prefabs/Enemies/EnemyAttack/Spore_Mushy"), transform.position, Quaternion.Euler(0, 0, 30));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(3f);
         isAttacking = false;
     }
 

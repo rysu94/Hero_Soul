@@ -10,12 +10,15 @@ public class OrboController : Monster
     public Vector2 newDir;
 
     public int jumpCount = 0;
+    public int missileCount = 0;
 
     public GameObject orboMissile;
 
     // Use this for initialization
     void Start ()
     {
+        monsterName = "Orbo";
+
         monsterHealth = 65;
         contactDamage = 10;
 
@@ -28,7 +31,7 @@ public class OrboController : Monster
 
         //Hard Carapace
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[37]);
-        monsterDropChance.Add(33);
+        monsterDropChance.Add(333);
 
         //Arcana [fire, water, earth, air, life]
         arcanaDrop.Add(0);
@@ -37,7 +40,9 @@ public class OrboController : Monster
         arcanaDrop.Add(0);
         arcanaDrop.Add(1);
 
-        experienceDrop = 10;      
+        experienceDrop = 10;
+
+        colNoise = GetComponent<AudioSource>().clip;
     }
 	
 	// Update is called once per frame
@@ -56,7 +61,7 @@ public class OrboController : Monster
         {
 
             //Check if the object is paused
-            while (GameController.paused)
+            while (GameController.paused || frozen)
             {
                 yield return null;
             }
@@ -78,12 +83,20 @@ public class OrboController : Monster
                 {
 
                     //Check if the object is paused
-                    while (GameController.paused)
+                    while (GameController.paused || frozen)
                     {
                         yield return null;
                     }
-
-                    Instantiate(orboMissile, transform.position, Quaternion.identity);
+                    missileCount++;
+                    if(i%4 == 0)
+                    {
+                        Instantiate(orboMissile, transform.position, Quaternion.identity);
+                    }
+                    else
+                    {
+                        Instantiate(Resources.Load("Prefabs/Enemies/EnemyAttack/Orbo_Missile_2"), transform.position, Quaternion.identity);
+                    }
+                    
                     yield return new WaitForSeconds(1f);
                 }
                 orboAnim.Play("Orbo_Attack_Close");

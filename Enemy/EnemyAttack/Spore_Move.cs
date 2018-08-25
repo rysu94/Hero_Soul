@@ -32,6 +32,11 @@ public class Spore_Move : MonoBehaviour
         {
             StartCoroutine(Pop());
         }
+        else if (other.gameObject.tag == "Comp_Shield")
+        {
+            Destroy(gameObject);
+            Companion_Controller.shieldAmount -= 5;
+        }
         else if(other.gameObject.tag == "Player" && !TestCharController.invuln)
         {
             DamageManager.PlayerDamage(5, TestCharController.player.gameObject, false);

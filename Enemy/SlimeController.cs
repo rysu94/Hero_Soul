@@ -24,6 +24,8 @@ public class SlimeController : Monster
 	// Use this for initialization
 	void Start ()
     {
+        monsterName = "G-Slime";
+
         monsterHealth = 65;
         contactDamage = 10;
 
@@ -32,23 +34,25 @@ public class SlimeController : Monster
         monsterSprite = GetComponent<SpriteRenderer>();
         monsterRB = GetComponent<Rigidbody2D>();
 
+
+
         //G-Slime Loot Table
 
         //G-Slime Crystal
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[30]);
-        monsterDropChance.Add(25);
+        monsterDropChance.Add(250);
         //Arcane Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[13]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Enduring Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[14]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Endurance
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[33]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Int
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[34]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
 
 
         //Arcana [fire, water, earth, air, life]
@@ -67,7 +71,9 @@ public class SlimeController : Monster
         {
             experienceDrop = 0;
         }
-        
+
+        hitNoise = Resources.Load("Sound/SlimeHit") as AudioClip;
+        colNoise = GetComponent<AudioSource>().clip;
 
         StartCoroutine(MoveRoutine());
     }
@@ -84,7 +90,7 @@ public class SlimeController : Monster
         {
 
             //Check if the object is paused
-            while (GameController.paused)
+            while (GameController.paused || frozen)
             {
                 yield return null;
             }

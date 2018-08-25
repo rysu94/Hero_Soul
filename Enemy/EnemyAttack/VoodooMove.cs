@@ -38,6 +38,11 @@ public class VoodooMove : MonoBehaviour
     {
         while(numOrbs > 0)
         {
+            while (GameController.paused)
+            {
+                yield return null;
+            }
+
             for(int i = 0; i < orbAngle.Length; i++)
             {
                 orbAngle[i] += 2f;

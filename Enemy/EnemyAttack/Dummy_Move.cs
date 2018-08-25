@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MaskyMove : MonoBehaviour
+public class Dummy_Move : MonoBehaviour
 {
-
-    public Rigidbody2D maskyMissileRB;
+    public Rigidbody2D dummyMissileRB;
 
 
     // Use this for initialization
     void Start()
     {
-        maskyMissileRB = GetComponent<Rigidbody2D>();
-        StartCoroutine(MaskyAttack());
+        dummyMissileRB = GetComponent<Rigidbody2D>();
+        StartCoroutine(OrboMove());
     }
 
     // Update is called once per frame
@@ -27,14 +26,9 @@ public class MaskyMove : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if(other.gameObject.tag == "Comp_Shield")
-        {
-            Destroy(gameObject);
-            Companion_Controller.shieldAmount -= 10;
-        }
         else if (other.gameObject.tag == "Player" && !TestCharController.invuln)
         {
-            DamageManager.PlayerDamage(10, TestCharController.player.gameObject, false);
+            TrialDodgeController.hitCount++;
             //Play the player's getting hurt SFX
             TestCharController.playerAttack.clip = TestCharController.hurtNoise[Random.Range(0, TestCharController.hurtNoise.Length)];
             TestCharController.playerAttack.Play();
@@ -42,21 +36,24 @@ public class MaskyMove : MonoBehaviour
         }
     }
 
-    IEnumerator MaskyAttack()
+    IEnumerator OrboMove()
     {
-        while(gameObject)
+        while (gameObject)
         {
             //Check if the object is paused
             while (GameController.paused)
             {
-                maskyMissileRB.velocity = new Vector2(0, 0);
+                dummyMissileRB.velocity = new Vector2(0, 0);
                 yield return null;
             }
 
             yield return new WaitForSeconds(.1f);
-            maskyMissileRB.velocity = new Vector2(0, -1.5f);
+            if (dummyMissileRB.velocity.magnitude <= 0)
+            {
+                dummyMissileRB.velocity = (TestCharController.player.transform.position - transform.position).normalized * .5f;
+            }
+
         }
 
     }
 }
-

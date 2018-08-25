@@ -2,35 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Orbo_Move : MonoBehaviour
+public class Shade_Move : MonoBehaviour
 {
     public Rigidbody2D orboMissileRB;
-    Vector2 vel;
+    public Vector2 vel;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         orboMissileRB = GetComponent<Rigidbody2D>();
-        vel = (TestCharController.player.transform.position - transform.position).normalized * .5f;
         StartCoroutine(OrboMove());
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
-		
-	}
+
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Wall")
         {
             Destroy(gameObject);
-        }
-        else if (other.gameObject.tag == "Comp_Shield")
-        {
-            Destroy(gameObject);
-            Companion_Controller.shieldAmount -= 10;
         }
         else if (other.gameObject.tag == "Player" && !TestCharController.invuln)
         {
@@ -44,7 +38,7 @@ public class Orbo_Move : MonoBehaviour
 
     IEnumerator OrboMove()
     {
-        while(gameObject)
+        while (gameObject)
         {
             //Check if the object is paused
             while (GameController.paused)
@@ -54,11 +48,11 @@ public class Orbo_Move : MonoBehaviour
             }
 
             yield return new WaitForSeconds(.1f);
-            if(orboMissileRB.velocity.magnitude <= 0)
+            if (orboMissileRB.velocity.magnitude <= 0)
             {
                 orboMissileRB.velocity = vel;
             }
-            
+
         }
 
     }

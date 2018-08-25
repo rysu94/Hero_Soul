@@ -12,6 +12,8 @@ public class Masky_Controller : Monster
 	// Use this for initialization
 	void Start ()
     {
+        monsterName = "Masky";
+
         monsterHealth = 80;
         contactDamage = 15;
 
@@ -21,7 +23,7 @@ public class Masky_Controller : Monster
 
         //Hard Carapace
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[37]);
-        monsterDropChance.Add(33);
+        monsterDropChance.Add(333);
 
         //Arcana [fire, water, earth, air, life]
         arcanaDrop.Add(0);
@@ -31,6 +33,20 @@ public class Masky_Controller : Monster
         arcanaDrop.Add(1);
 
         experienceDrop = 10;
+
+        hitNoise = Resources.Load("Sound/MaskyHit") as AudioClip;
+
+        int tempInt = Random.Range(1, 3);
+        if(tempInt == 1)
+        {
+            transform.position = new Vector2(Random.Range(-2.2f, -.6f), 1.2f);
+        }
+        else
+        {
+            transform.position = new Vector2(Random.Range(.6f, 2.2f), 1.2f);
+        }
+
+        colNoise = GetComponent<AudioSource>().clip;
 
         StartCoroutine(AttackRoutine());
 
@@ -48,7 +64,7 @@ public class Masky_Controller : Monster
         {
 
             //Check if the object is paused
-            while (GameController.paused)
+            while (GameController.paused || frozen)
             {
                 yield return null;
             }
@@ -59,7 +75,7 @@ public class Masky_Controller : Monster
             {
 
                 //Check if the object is paused
-                while (GameController.paused)
+                while (GameController.paused || frozen)
                 {
                     yield return null;
                 }

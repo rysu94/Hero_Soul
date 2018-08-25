@@ -24,7 +24,7 @@ public class SlimeKingController : Monster
     public Text bossBarText;
 
     public float bossBarWidth = 201.4f;
-    public float monsterMaxHealth = 900;
+    public float monsterMaxHealth = 1750;
 
     public Animator slimeAnim;
 
@@ -37,6 +37,7 @@ public class SlimeKingController : Monster
     //Slime King Sfx 
     public AudioClip collapseNoise;
     public AudioClip groundPoundNoise;
+    public AudioClip whistleNoise;
 
     public Coroutine behaviorRoutine;
 
@@ -60,12 +61,22 @@ public class SlimeKingController : Monster
 
     public int jumpCount = 0;
 
+    //Charge Bar
+    public float chargeMult;
+    public GameObject chargeBar, chargeFrame;
+
+    public GameObject treasure;
+
+    //Hero Soul Spawned?
+    bool soulSpawned = false;
 
     // Use this for initialization
     void Start()
     {
-        monsterHealth = 1200;
-        monsterMaxHealth = 1200;
+        boss = true;
+
+        monsterHealth = 1750;
+        monsterMaxHealth = 1750;
         contactDamage = 30;
 
         player = GameObject.FindGameObjectWithTag("Player");
@@ -77,16 +88,16 @@ public class SlimeKingController : Monster
 
         //Arcane Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[13]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Enduring Copper Ring
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[14]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Endurance
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[33]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
         //Pendent of Int
         monsterDrops.Add(GameObject.Find("InventoryController").GetComponent<ItemDatabase>().itemData[34]);
-        monsterDropChance.Add(1);
+        monsterDropChance.Add(10);
 
 
         //Arcana [fire, water, earth, air, life]
@@ -99,6 +110,7 @@ public class SlimeKingController : Monster
         //experience drop
         experienceDrop = 150;
 
+        colNoise = GetComponent<AudioSource>().clip;
 
         StartCoroutine(StartRoutine());
         
@@ -121,20 +133,20 @@ public class SlimeKingController : Monster
             GameObject.Find("BGM").GetComponent<AudioSource>().Play();
         }
         //75% size change
-        if(monsterHealth <= 900 && !phase1 && !phase2 && !phase3)
+        if(monsterHealth <= (monsterMaxHealth*.75f) && !phase1 && !phase2 && !phase3 && !isRolling)
         {
             phase1 = true;
             StartCoroutine(RolloutRoutine(3));
         }
         //50% size change
-        if(monsterHealth <= 600 && !phase2 && !phase3)
+        else if(monsterHealth <= (monsterMaxHealth * .5f) && !phase2 && !phase3 && !isRolling)
         {
             phase2 = true;
             phase1 = false;
             StartCoroutine(RolloutRoutine(6));
         }
         //25% size change
-        if(monsterHealth <= 300 && !phase3)
+        else if(monsterHealth <= (monsterMaxHealth * .25f) && !phase3 && !isRolling)
         {
             phase3 = true;
             phase2  = false;
@@ -155,6 +167,20 @@ public class SlimeKingController : Monster
         {
             GetComponent<CircleCollider2D>().enabled = true;
         }
+
+        if(monsterHealth <= 0)
+        {
+            treasure.SetActive(true);
+            treasure.transform.Find("Light_Beam").GetComponent<Animator>().Play("Mosaic_Light_Spawn");
+            if(!soulSpawned)
+            {
+                Instantiate(Resources.Load("Prefabs/Soul/Hero_Soul_Selector"), transform.position, Quaternion.identity);
+                soulSpawned = true;
+            }
+
+            
+        }
+
     }
     
     /* Slime King's Behaviors
@@ -168,24 +194,58 @@ public class SlimeKingController : Monster
     {
         while(monsterHealth > 0)
         {
-
+            print(GetComponent<Rigidbody2D>().velocity);
             //Check if the object is paused
             while (GameController.paused)
             {
                 yield return null;
             }
-
+            
             //Time between actions
             monsterRB.constraints = ~RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
             yield return new WaitForSeconds(1.5f);
             monsterRB.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+            
             //Decide what action to do
             if(!isRolling)
             {
                 if (jumpCount == 10)
                 {
-                    StartCoroutine(ShakeScreen(.35f));
+                    //Charge Bar
+                    if (phase1)
+                    {
+                        chargeFrame.transform.localScale = new Vector2(.375f, .25f);
+                    }
+                    else if (phase2)
+                    {
+                        chargeFrame.transform.localScale = new Vector2(.5f, .33f);
+                    }
+                    else if (phase3)
+                    {
+                        chargeFrame.transform.localScale = new Vector2(.75f, .5f);
+                    }
+                    else
+                    {
+                        chargeFrame.transform.localScale = new Vector2(.3f, .2f);
+                    }
+
+                    chargeFrame.SetActive(true);
+                    chargeMult = 0;
+
+                    for(int i = 0; i < 100; i++)
+                    {
+                        //Change the charge bar
+                        float scale = chargeMult / 100f;
+                        chargeBar.transform.localScale = new Vector2(scale, 1f);
+                        float offset = -.17f + (.17f * scale);
+                        chargeBar.transform.localPosition = new Vector2(offset, 0);
+                        chargeMult += 1;
+                        yield return new WaitForSeconds(.01f);
+                    }
+                    chargeFrame.SetActive(false);
+
                     StartCoroutine(GroundPound());
+                    yield return StartCoroutine(ShakeScreen(.35f)); 
                     jumpCount = 0;
                 }
                 else
@@ -195,7 +255,6 @@ public class SlimeKingController : Monster
                 }
             }
         }
-        
     }
 
     //Shakes the screen
@@ -211,7 +270,24 @@ public class SlimeKingController : Monster
         GetComponent<AudioSource>().clip = groundPoundNoise;
         GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(.5f);
-        stateManager.GetComponent<StateManager>().AddState(3, 7, 1, false);
+
+        if(phase1)
+        {
+            stateManager.GetComponent<StateManager>().AddState(3, 7, 1, false);
+        }
+        else if(phase2)
+        {
+            stateManager.GetComponent<StateManager>().AddState(2, 7, 1, false);
+        }
+        else if (phase2)
+        {
+            stateManager.GetComponent<StateManager>().AddState(1, 7, 1, false);
+        }
+        else
+        {
+            stateManager.GetComponent<StateManager>().AddState(4, 7, 1, false);
+        }
+
         float shakeDuration = duration;
         Vector2 originalPos = cameraObject.transform.position;
         while(shakeDuration > 0)
@@ -258,9 +334,44 @@ public class SlimeKingController : Monster
         unstoppable = true;
         invulnerable = true;
 
+        GameObject.Find("Ability_Frame").GetComponent<Animator>().Play("Ability_Enter");
+        GameObject.Find("Ability_Frame").GetComponent<AudioSource>().Play();
+        GameObject.Find("Ability_Frame").transform.Find("Ability_Name").GetComponent<Text>().text = "Royal Rollout";
+
         //Show the player the boss is about to roll
         slimeAnim.Play("Slime_Roll_Down");
-        yield return new WaitForSeconds(1.5f);
+        //Charge Bar
+        if (phase1)
+        {
+            chargeFrame.transform.localScale = new Vector2(.3f, .2f);           
+        }
+        else if (phase2)
+        {
+            chargeFrame.transform.localScale = new Vector2(.375f, .25f);        
+        }
+        else if (phase3)
+        {
+            chargeFrame.transform.localScale = new Vector2(.5f, .33f);
+        }
+        else
+        {
+            
+        }
+
+        chargeFrame.SetActive(true);
+        chargeMult = 0;
+
+        for (int i = 0; i < 100; i++)
+        {
+            //Change the charge bar
+            float scale = chargeMult / 100f;
+            chargeBar.transform.localScale = new Vector2(scale, 1f);
+            float offset = -.17f + (.17f * scale);
+            chargeBar.transform.localPosition = new Vector2(offset, 0);
+            chargeMult += 1;
+            yield return new WaitForSeconds(.015f);
+        }
+        chargeFrame.SetActive(false);
 
         //Check if the object is paused
         while (GameController.paused)
@@ -282,16 +393,38 @@ public class SlimeKingController : Monster
             //Down
             if (i % 2 > 0)
             {
-                rollDirection = GetRollDirection(235, 305);
-                slimeAnim.Play("Slime_Roll_Up");
+                if(Vector2.Angle(player.transform.position, new Vector2(0, -1)) < 65)
+                {
+                    rollDirection = (player.transform.position - transform.position).normalized * GetRollSpeedFactor();
+                    if(rollDirection.y > 0)
+                    {
+                        rollDirection.y *= -1;
+                    }
+                }
+                else
+                {
+                    rollDirection = GetRollDirection(235, 305).normalized * GetRollSpeedFactor();
+                }
+                slimeAnim.Play("Slime_Roll_Down");
                 monsterRB.velocity = new Vector2(0, 0);
                 rollingDown = true;
                 rollingUp = false;
             }
             else
             {
-                rollDirection = GetRollDirection(35, 125);
-                slimeAnim.Play("Slime_Roll_Down");
+                if (Vector2.Angle(player.transform.position, new Vector2(0, 1)) < 65)
+                {
+                    rollDirection = (player.transform.position - transform.position).normalized * GetRollSpeedFactor();
+                    if (rollDirection.y < 0)
+                    {
+                        rollDirection.y *= -1;
+                    }
+                }
+                else
+                {
+                    rollDirection = GetRollDirection(65, 125).normalized * GetRollSpeedFactor();
+                }
+                slimeAnim.Play("Slime_Roll_Up");
                 monsterRB.velocity = new Vector2(0, 0);
                 rollingUp = true;
                 rollingDown = false;
@@ -308,7 +441,7 @@ public class SlimeKingController : Monster
                 }
 
 
-                monsterRB.velocity = rollDirection * GetRollSpeedFactor();
+                monsterRB.velocity = rollDirection.normalized * GetRollSpeedFactor();
                 yield return new WaitForSeconds(.1f);
 
                 //check if the boss hits the left/right boundaries
@@ -319,12 +452,12 @@ public class SlimeKingController : Monster
                     if(rollingUp)
                     {
                         StartCoroutine(ShakeScreenNS(.15f));
-                        rollDirection = GetRollDirection(145, 170);
+                        rollDirection = GetRollDirection(145, 170).normalized;
                     }
                     else
                     {
                         StartCoroutine(ShakeScreenNS(.15f));
-                        rollDirection = GetRollDirection(235, 260);
+                        rollDirection = GetRollDirection(235, 260).normalized;
                     }
                 }
                 //left wall
@@ -333,12 +466,12 @@ public class SlimeKingController : Monster
                     if(rollingUp)
                     {
                         StartCoroutine(ShakeScreenNS(.15f));
-                        rollDirection = GetRollDirection(55, 80);
+                        rollDirection = GetRollDirection(55, 80).normalized;
                     }
                     else
                     {
                         StartCoroutine(ShakeScreenNS(.15f));
-                        rollDirection = GetRollDirection(325, 350);
+                        rollDirection = GetRollDirection(325, 350).normalized;
                     }
                 }
 
@@ -375,13 +508,13 @@ public class SlimeKingController : Monster
             slimeAnim.Play("Slime_Hurt_1");
             if(transform.localPosition.y < 0)
             {
-                print("DOWN");
+                //print("DOWN");
                 Instantiate(spawnSlimePrefabDown, new Vector2(transform.localPosition.x, transform.localPosition.y + .5f), Quaternion.identity);
                 LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount += 5;
             }
             else
             {
-                print("UP");
+                //print("UP");
                 Instantiate(spawnSlimePrefabUp, new Vector2(transform.localPosition.x, transform.localPosition.y + .5f), Quaternion.identity);
                 LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount += 5;
             }
@@ -438,7 +571,7 @@ public class SlimeKingController : Monster
         Vector2 rollDirection = new Vector2(0, 0);
         float randomAngle = Random.Range(angle1, angle2);
         float radians = randomAngle * (Mathf.PI / 180);
-        rollDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+        rollDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
         return rollDirection;
     }
 
@@ -446,7 +579,7 @@ public class SlimeKingController : Monster
     {
         Vector2 rollDirection = new Vector2(0, 0);
         float radians = angle1 * (Mathf.PI / 180);
-        rollDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+        rollDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
         return rollDirection;
     }
 
@@ -478,20 +611,20 @@ public class SlimeKingController : Monster
 
 
     //This helper function returns an integer that will modify the rollout speed
-    int GetRollSpeedFactor()
+    float GetRollSpeedFactor()
     {
-        int returnInt = 1;
+        float returnInt = 1;
         if(phase1)
         {
-            returnInt = 2;
+            returnInt = 1.5f;
         }
         else if(phase2)
         {
-            returnInt = 2;
+            returnInt = 2f;
         }
         else if(phase3)
         {
-            returnInt = 2;
+            returnInt = 2.5f;
         }
         return returnInt;
     }
@@ -505,6 +638,9 @@ public class SlimeKingController : Monster
             monsterRB.velocity = new Vector2(0, 0);
             yield return null;
         }
+        GameObject.Find("Ability_Frame").GetComponent<Animator>().Play("Ability_Enter");
+        GameObject.Find("Ability_Frame").GetComponent<AudioSource>().Play();
+        GameObject.Find("Ability_Frame").transform.Find("Ability_Name").GetComponent<Text>().text = "Kingly Crash";
 
         slimeAnim.Play("Slime_GPound");
         yield return new WaitForSeconds(1f);
@@ -575,13 +711,31 @@ public class SlimeKingController : Monster
     IEnumerator StartRoutine()
     {
         yield return new WaitForEndOfFrame();
+        treasure.SetActive(false);
         bossBarText.text = "Slime King";
         bossBarFrame.SetActive(true);
         bossBar.SetActive(true);
         GameObject.Find("BGM").GetComponent<AudioSource>().Stop();
+
+        
+        TestCharController.inDialogue = true;
+        GetComponent<AudioSource>().clip = whistleNoise;
+        GetComponent<AudioSource>().Play();
+        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        transform.Find("Crown").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        transform.Find("Shadow").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+        yield return new WaitForSeconds(4.25f);
+        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        transform.Find("Crown").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        transform.Find("Shadow").GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+        yield return StartCoroutine(ShakeScreenNS(.75f));
+        TestCharController.inDialogue = false;
+        GetComponent<Animator>().Play("Slime_Idle");
         bossWipe.SetActive(true);
         TestCharController.inDialogue = true;
         yield return new WaitForSeconds(2f);
+        Camera.main.orthographicSize = 1.828043f;
+        Camera.main.transform.position = new Vector3(0, 0, -10);
         TestCharController.inDialogue = false;
         behaviorRoutine = StartCoroutine(SlimeKingBehavior());
         bossWipe.SetActive(false);

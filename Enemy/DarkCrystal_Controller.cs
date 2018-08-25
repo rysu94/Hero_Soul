@@ -2,39 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoodooController : Monster
+public class DarkCrystal_Controller : Monster
 {
 
-    public Animator voodooAnim;
 
 	// Use this for initialization
 	void Start ()
     {
-        monsterName = "Voodoo";
-
-        monsterHealth = 40;
-        contactDamage = 10;
+        monsterHealth = 250;
+        contactDamage = 30;
 
         player = GameObject.FindGameObjectWithTag("Player");
-        voodooAnim = GetComponent<Animator>();
         monsterSprite = GetComponent<SpriteRenderer>();
         monsterRB = GetComponent<Rigidbody2D>();
 
+        //Slime King Loot Table
+
+
         //Arcana [fire, water, earth, air, life]
-        arcanaDrop.Add(2);
         arcanaDrop.Add(0);
-        arcanaDrop.Add(1);
         arcanaDrop.Add(0);
-        arcanaDrop.Add(1);
+        arcanaDrop.Add(0);
+        arcanaDrop.Add(0);
+        arcanaDrop.Add(0);
 
-        colNoise = GetComponent<AudioSource>().clip;
-
-        experienceDrop = 5;
+        //experience drop
+        experienceDrop = 1;
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-		
+
 	}
 }

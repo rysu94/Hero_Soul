@@ -70,6 +70,19 @@ public class Monster : MonoBehaviour {
 
     public bool unstoppable = false;
 
+    //can the monster move
+    public bool frozen = false;
+
+    //monster's name
+    public string monsterName;
+
+    //Boss?
+    public bool boss = false;
+
+    //Hit Sound
+    public AudioClip hitNoise;
+    public AudioClip colNoise;
+
     void Awake()
     {
         
@@ -90,15 +103,47 @@ public class Monster : MonoBehaviour {
     //Deal X damage to the monster, and checks if the monster dies
     public void DamageMonster(int damage)
     {
-        monsterHealth -= damage;
+        //Create Hit Animation
+        GameObject tempObj = Instantiate(Resources.Load<GameObject>("Prefabs/Hit/Wep_Hit_" + Random.Range(1,4)), transform.position, Quaternion.identity);
 
-        if(monsterHealth <= 0 && !isCollapsing)
+        //StartCoroutine(ShakeScreenNS(.15f));
+
+        if (hitNoise != null)
+        {
+            //GameObject tempObj = Instantiate(Resources.Load("Sound/One_Shot_Audio") as GameObject, new Vector2(0, 0), Quaternion.identity);
+            tempObj.GetComponent<AudioSource>().clip = hitNoise;
+            tempObj.GetComponent<AudioSource>().Play();
+        }
+
+        if (!invulnerable)
+        {
+            monsterHealth -= damage;
+        }
+
+        /*
+        //Set as Companion Target
+        Companion_Controller.playerTarget = gameObject;
+        */
+
+        if (monsterHealth <= 0 && !isCollapsing)
         {
             StartCoroutine("DeathRoutine");
 
             //Plays the Collapse Noise from the Mushy
-            AudioSource deathNoise = GetComponent<AudioSource>();
-            deathNoise.Play();
+            if(colNoise != null)
+            {
+                GetComponent<AudioSource>().clip = colNoise;
+            }
+            
+            GetComponent<AudioSource>().Play();
+
+            /*
+            //Remove Companion Target
+            if(Companion_Controller.playerTarget != null)
+            {
+                Companion_Controller.playerTarget = null;
+            }
+            */
         } 
     }
 
@@ -116,6 +161,9 @@ public class Monster : MonoBehaviour {
             monsterRB.velocity = new Vector2(0, 0);
             yield return null;
         }
+
+        //Add Beastiary entry
+        GameObject.Find("BeastiaryManager").GetComponent<Bestiary_Database>().AddEntry(monsterName);
 
 
         //Set the collapsing flag to true
@@ -143,7 +191,7 @@ public class Monster : MonoBehaviour {
 
         //Updates the enemy count in the current room, if there are no more enemies open doors
         LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount--;
-        print("Enemy ded" + LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount);
+        //print("Enemy ded" + LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount);
         if (LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].enemyCount <= 0)
         {
             LevelCreator.levelGrid[LevelCreator.playerCurrentX, LevelCreator.playerCurrentY].roomClear = true;
@@ -174,12 +222,12 @@ public class Monster : MonoBehaviour {
             //Allows the enemy to move
             monsterRB.constraints = ~RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
             //Allows the enemy to move
-            Vector2 direction = (player.transform.position - transform.position).normalized;
-            monsterRB.velocity = -direction * .25f;
+            Vector2 direction = (player.transform.position - transform.position).normalized * .25f;
+            monsterRB.velocity = -direction * .1f;
         }
 
 
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(.31f);
 
         if(!unstoppable)
         {
@@ -190,6 +238,47 @@ public class Monster : MonoBehaviour {
         isSliding = false;
         isTriggered = false;
     }
+
+    //This coroutine executes a enemy slide when damaged
+    public IEnumerator CustomSlideRoutine(float power)
+    {
+        if(isSliding)
+        {
+            if (!unstoppable)
+            {
+                //Allows the enemy to move
+                Vector2 direction = (player.transform.position - transform.position).normalized;
+                monsterRB.velocity = -direction * power;
+            }
+        }
+        else
+        {
+            isSliding = true;
+            //get the direction
+
+            if (!unstoppable)
+            {
+                //Allows the enemy to move
+                monsterRB.constraints = ~RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+                //Allows the enemy to move
+                Vector2 direction = (player.transform.position - transform.position).normalized;
+                monsterRB.velocity = -direction * power;
+            }
+
+            yield return new WaitForSeconds(.5f);
+
+            if (!unstoppable)
+            {
+                //Restricts enemy movements
+                monsterRB.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+            }
+
+            isSliding = false;
+        }
+    }
+
+
+
 
     //This coroutine executes a player slide when contacting an enemy
     IEnumerator PlayerSlideRoutine()
@@ -217,7 +306,7 @@ public class Monster : MonoBehaviour {
         DamageManager.PlayerDamage(contactDamage, player, false);
 
         //Play the player's getting hurt SFX
-        if(!TestCharController.breakInvuln)
+        if (!TestCharController.breakInvuln)
         {
             TestCharController.playerAttack.clip = TestCharController.hurtNoise[Random.Range(0, TestCharController.hurtNoise.Length)];
             TestCharController.playerAttack.Play();
@@ -271,9 +360,9 @@ public class Monster : MonoBehaviour {
         
         for (int i = 0; i < DamageManager.totalHits; i++)
         {
-            int spellDamage = DamageManager.MagicDamage(startOffset, this.gameObject);
+            //int spellDamage = DamageManager.MagicDamage(startOffset, this.gameObject);
             startOffset += offsetIncrement;
-            DamageMonster(spellDamage);
+            //DamageMonster(spellDamage);
             yield return new WaitForSeconds(.05f);
         }
 
@@ -284,6 +373,16 @@ public class Monster : MonoBehaviour {
     //                            Monster Collision
     //
     //=================================================================================
+
+    public void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Weapon" && TestCharController.startBreak)
+        {
+            TestCharController.player.GetComponent<TestCharController>().playerRB.velocity = new Vector2(0, 0);
+            TestCharController.breakHit = true;
+            TestCharController.player.GetComponent<TestCharController>().breakTargetSingle = gameObject;
+        }
+    }
 
     public virtual void OnTriggerEnter2D(Collider2D collision)
     {
@@ -298,6 +397,7 @@ public class Monster : MonoBehaviour {
             }
             else
             {
+
                 int wepDamage = DamageManager.WeaponDamage(this.gameObject);
                 DamageMonster(wepDamage);
             }
@@ -321,7 +421,6 @@ public class Monster : MonoBehaviour {
 
             if(TestCharController.startBreak)
             {
-                print("hit");
                 TestCharController.player.GetComponent<TestCharController>().playerRB.velocity = new Vector2(0, 0);
                 TestCharController.breakHit = true;
                 TestCharController.player.GetComponent<TestCharController>().breakTargetSingle = gameObject;
@@ -331,8 +430,8 @@ public class Monster : MonoBehaviour {
         else if (collision.gameObject.tag == "Spell_Destructible" && !isTriggered && !invulnerable)
         {
             isTriggered = true;
-            int spellDamage = DamageManager.MagicDamage(0, this.gameObject);
-            DamageMonster(spellDamage);
+            //int spellDamage = DamageManager.MagicDamage(0,this.gameObject);
+            //DamageMonster(spellDamage);
 
             if (!isCollapsing)
             {
@@ -363,7 +462,6 @@ public class Monster : MonoBehaviour {
 
         else if (collision.gameObject.tag == "Player")
         {
-
             if (!isCollapsing && !TestCharController.invuln)
             {
                 player.GetComponent<SpriteRenderer>().color = new Color(1f, redValue, redValue);
@@ -381,13 +479,54 @@ public class Monster : MonoBehaviour {
                 
             }
         }
+
+        else if(collision.gameObject.tag == "Companion")
+        {
+            if(!collision.gameObject.GetComponent<Companion_Controller>().invulnerable)
+            {
+                collision.gameObject.GetComponent<Companion_Controller>().DamageCompanion(contactDamage);
+                Companion_Controller.playerTarget = gameObject;
+            }
+            
+        }
+
+        else if(collision.gameObject.tag == "Proj_Deflect" && !isTriggered)
+        {
+            isTriggered = true;
+
+            if (physicalResist || invulnerable)
+            {
+                DamageMonster(0);
+            }
+            else
+            {
+                DamageMonster(contactDamage);
+                DamageManager.CreateText(contactDamage.ToString(), gameObject);
+            }
+            if (!isCollapsing)
+            {
+                monsterSprite.color = new Color(1f, redValue, redValue);
+                StartCoroutine("ColorReturnRoutineEnemy");
+            }
+            if (!isSliding && !isCollapsing)
+            {
+                StartCoroutine("EnemySlideRoutine");
+            }
+
+        }
+
+        if(collision.gameObject.tag == "Wall" && !unstoppable)
+        {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        }
+
     }
     //=================================================================================
     //                            Monster Drops
     //
     //=================================================================================
 
-    void ItemDrop()
+    public void ItemDrop()
     {
         //check if the monster can drop anything
         if(monsterDrops.Count > 0)
@@ -395,7 +534,7 @@ public class Monster : MonoBehaviour {
             int dropChance = 0;
             for(int i = 0; i < monsterDrops.Count; i++)
             {
-                dropChance = Random.Range(1, 101);
+                dropChance = Random.Range(1, 1001);
                 if(dropChance <= monsterDropChance[i])
                 {
                     GameObject drop = Instantiate(Resources.Load("Prefabs/Items/" + monsterDrops[i].itemIconName),
@@ -403,6 +542,23 @@ public class Monster : MonoBehaviour {
 
                     Rigidbody2D dropRB = drop.GetComponent<Rigidbody2D>();
                     dropRB.velocity = new Vector2(Random.Range(-5f, 5f), Random.Range(-.5f, .5f)).normalized * Random.Range(0,.5f);
+
+
+                    //Alc Talent
+                    if(monsterDrops[i].itemType == "Crafting Material")
+                    {
+                        int alcChance = Random.Range(0, 100);
+                        if(alcChance < (PlayerStats.alcLevel * 10))
+                        {
+                            GameObject bonusDrop = Instantiate(Resources.Load("Prefabs/Items/" + monsterDrops[i].itemIconName),
+                                new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
+
+                            Rigidbody2D bonusDropRB = bonusDrop.GetComponent<Rigidbody2D>();
+                            bonusDropRB.velocity = new Vector2(Random.Range(-5f, 5f), Random.Range(-.5f, .5f)).normalized * Random.Range(0, .5f);
+                        }
+                    }
+                    
+
 
                 }
             }
@@ -413,7 +569,7 @@ public class Monster : MonoBehaviour {
         //Fire
         if(arcanaDrop[0] > 0)
         {
-            for(int i = 0; i < arcanaDrop[0]; i++)
+            for(int i = 0; i < arcanaDrop[0] + PlayerStats.collectLevel; i++)
             {
                 GameObject drop = Instantiate(Resources.Load("Prefabs/Arcana/Ar_Fire"),
                         new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
@@ -425,7 +581,7 @@ public class Monster : MonoBehaviour {
         //Water
         if (arcanaDrop[1] > 0)
         {
-            for (int i = 0; i < arcanaDrop[1]; i++)
+            for (int i = 0; i < arcanaDrop[1] + PlayerStats.collectLevel; i++)
             {
                 GameObject drop = Instantiate(Resources.Load("Prefabs/Arcana/Ar_Water"),
                         new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
@@ -437,7 +593,7 @@ public class Monster : MonoBehaviour {
         //Earth
         if (arcanaDrop[2] > 0)
         {
-            for (int i = 0; i < arcanaDrop[2]; i++)
+            for (int i = 0; i < arcanaDrop[2] + PlayerStats.collectLevel; i++)
             {
                 GameObject drop = Instantiate(Resources.Load("Prefabs/Arcana/Ar_Earth"),
                         new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
@@ -449,7 +605,7 @@ public class Monster : MonoBehaviour {
         //Wind
         if (arcanaDrop[3] > 0)
         {
-            for (int i = 0; i < arcanaDrop[3]; i++)
+            for (int i = 0; i < arcanaDrop[3] + PlayerStats.collectLevel; i++)
             {
                 GameObject drop = Instantiate(Resources.Load("Prefabs/Arcana/Ar_Air"),
                         new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
@@ -461,7 +617,7 @@ public class Monster : MonoBehaviour {
         //Life
         if (arcanaDrop[4] > 0)
         {
-            for (int i = 0; i < arcanaDrop[4]; i++)
+            for (int i = 0; i < arcanaDrop[4] + PlayerStats.collectLevel; i++)
             {
                 GameObject drop = Instantiate(Resources.Load("Prefabs/Arcana/Ar_Life"),
                         new Vector2(transform.position.x, transform.position.y), Quaternion.identity) as GameObject;
@@ -470,8 +626,23 @@ public class Monster : MonoBehaviour {
             }
 
         }
+    }
 
 
+    //Shakes the screen no stun
+    IEnumerator ShakeScreenNS(float duration)
+    {
+        float shakeDuration = duration;
+        Vector2 originalPos = Camera.main.transform.position;
+        while (shakeDuration > 0)
+        {
+            shakeDuration -= .01f;
+            Vector2 newPos = new Vector2(originalPos.x + (Random.insideUnitCircle.x * .001f), originalPos.y);
+            Camera.main.transform.position = new Vector3(newPos.x, newPos.y, -10);
+            yield return new WaitForSeconds(.01f);
+        }
+        yield return new WaitForSeconds(.01f);
+        Camera.main.transform.position = new Vector3(originalPos.x, originalPos.y, -10);
     }
 
 
