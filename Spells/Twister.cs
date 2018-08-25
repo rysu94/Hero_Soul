@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireSpin : MonoBehaviour
+public class Twister : MonoBehaviour
 {
 
-    public int decayTime = 7;
     bool triggered = false;
     public List<GameObject> monsters = new List<GameObject>();
 
@@ -28,12 +27,13 @@ public class FireSpin : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(-1.5f, 0);
         }
+
         StartCoroutine(MoveRoutine());
-        StartCoroutine(FireSpinTick());
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        StartCoroutine(TwisterTick());
+    }
+
+    // Update is called once per frame
+    void Update()
     {
 
     }
@@ -57,17 +57,6 @@ public class FireSpin : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0) * .1f;
         }
-        while (decayTime > 0)
-        {
-            for(int i= 0; i < 5; i++)
-            {
-                Instantiate(Resources.Load("Prefabs/SpellFX/Fireball_2"), new Vector2(transform.position.x, transform.position.y), 
-                    Quaternion.Euler(0,0,(Random.Range(0,360) - 90)));
-                yield return new WaitForSeconds(.2f);
-            }
-            decayTime -= 1;
-        }
-        Destroy(gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -96,7 +85,7 @@ public class FireSpin : MonoBehaviour
         }
     }
 
-    IEnumerator FireSpinTick()
+    IEnumerator TwisterTick()
     {
         while (true)
         {
@@ -105,12 +94,12 @@ public class FireSpin : MonoBehaviour
             triggered = true;
             for (int i = 0; i < monsters.Count; i++)
             {
-                if(!monsters[i].GetComponent<Monster>().invulnerable)
+                if (!monsters[i].GetComponent<Monster>().invulnerable)
                 {
-                    int tempInt = DamageManager.MagicDamage(monsters[i], 30);
+                    int tempInt = DamageManager.MagicDamage(monsters[i], 25);
                     monsters[i].GetComponent<Monster>().DamageMonster(tempInt);
-                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(monsters[i].transform.position.x, monsters[i].transform.position.y), Quaternion.identity);
-                }              
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Wind_Explode"), new Vector2(monsters[i].transform.position.x, monsters[i].transform.position.y), Quaternion.identity);
+                }
             }
         }
     }

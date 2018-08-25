@@ -15,22 +15,22 @@ public class Embers : MonoBehaviour
         DamageManager.totalHits = 0;
         emberVelocity = TestCharController.playerVel;
         //Up
-        if (emberVelocity == new Vector2(0, 3))
+        if (TestCharController.player.GetComponent<TestCharController>().north)
         {
             transform.eulerAngles = new Vector3(0, 0, 90);
         }
         //Left
-        else if (emberVelocity == new Vector2(-3, 0))
+        else if (TestCharController.player.GetComponent<TestCharController>().west)
         {
             transform.eulerAngles = new Vector3(0, 0, 180);
         }
         //Right
-        else if (emberVelocity == new Vector2(3, 0))
+        else if (TestCharController.player.GetComponent<TestCharController>().east)
         {
             transform.eulerAngles = new Vector3(0, 0, 0);
         }
         //Down
-        else if (emberVelocity == new Vector2(0, -3))
+        else if (TestCharController.player.GetComponent<TestCharController>().south)
         {
             transform.eulerAngles = new Vector3(0, 0, -90);
         }

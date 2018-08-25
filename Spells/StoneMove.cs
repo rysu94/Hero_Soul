@@ -4,67 +4,37 @@ using UnityEngine;
 
 public class StoneMove : MonoBehaviour
 {
-
-    public int direction;
+    public float speed = 0;
     public bool isTriggered = false;
-
 
     // Use this for initialization
     void Start()
     {
-        StartCoroutine(MoveRoutine());
+        //StartCoroutine(MoveRoutine());
     }
 
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    IEnumerator MoveRoutine()
-    {
-        for(int i = 0; i < 10; i++)
-        {
-            transform.position = new Vector2(transform.position.x, transform.position.y + .018f);
-            yield return new WaitForSeconds(.05f);
-        }
-        while (direction > 0)
-        {
-            //north
-            if (direction == 1)
-            {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 3);
-            }
-            //south
-            else if (direction == 2)
-            {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0, -3);
-            }
-            //east
-            else if (direction == 3)
-            {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(3, 0);
-            }
-            //west
-            else if (direction == 4)
-            {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(-3, 0);
-            }
-            yield return new WaitForSeconds(.1f);
-        }
+        float x = -transform.up.x * speed;
+        float y = -transform.up.y * speed;
+        GetComponent<Rigidbody2D>().velocity = new Vector2(x, y);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.gameObject.tag == "Wall")
         {
-            Destroy(this.gameObject);
+            Instantiate(Resources.Load("Prefabs/SpellFX/Earth_Explode"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            Destroy(gameObject);
         }
         else if (other.gameObject.tag == "Enemy" && !isTriggered)
         {
-            DamageManager.spellBase = 25;
+            int tempInt = DamageManager.MagicDamage(other.gameObject, 50);
+            other.gameObject.GetComponent<Monster>().DamageMonster(tempInt);
+            Instantiate(Resources.Load("Prefabs/SpellFX/Earth_Explode"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
             isTriggered = true;
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 }

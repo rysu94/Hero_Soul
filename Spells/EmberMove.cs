@@ -29,16 +29,43 @@ public class EmberMove : MonoBehaviour
     {
         if (other.gameObject.gameObject.tag == "Wall")
         {
-            Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            int tempInt = Random.Range(1, 4);
+            switch(tempInt)
+            {
+                default:
+                    break;
+                case 1:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 2:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_B"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 3:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_C"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+            }
             Destroy(this.gameObject);
         }
         else if (other.gameObject.tag == "Enemy" && !isTriggered)
         {
-            
             isTriggered = true;
-            DamageManager.spellBase = -25;
-            DamageManager.totalHits++;
-            Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            int tempInt = DamageManager.MagicDamage(other.gameObject, 20);
+            other.gameObject.GetComponent<Monster>().DamageMonster(tempInt);
+            int tempInt2 = Random.Range(1, 4);
+            switch (tempInt2)
+            {
+                default:
+                    break;
+                case 1:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 2:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_B"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 3:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_C"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+            }
             Destroy(this.gameObject);
         }
         

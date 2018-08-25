@@ -4,35 +4,20 @@ using UnityEngine;
 
 public class Boulder : MonoBehaviour
 {
-
     public bool isTriggered = false;
+    float angle;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
-        if (TestCharController.player.GetComponent<TestCharController>().north)
-        {
-            transform.eulerAngles = new Vector3(0, 0, 90);
-        }
-        else if (TestCharController.player.GetComponent<TestCharController>().south)
-        {
-            transform.eulerAngles = new Vector3(0, 0, 270);
-        }
-        else if (TestCharController.player.GetComponent<TestCharController>().east)
-        {
-            transform.eulerAngles = new Vector3(0, 0, 0);
-        }
-        else if(TestCharController.player.GetComponent<TestCharController>().west)
-        {
-            transform.eulerAngles = new Vector3(0, 0, 180);
-        }
-	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    }
+
+    // Update is called once per frame
+    void Update()
     {
-        float x = transform.right.x * 2;
-        float y = transform.right.y * 2;
+        float x = -transform.up.x * 4;
+        float y = -transform.up.y * 4;
         GetComponent<Rigidbody2D>().velocity = new Vector2(x, y);
     }
 
@@ -40,13 +25,23 @@ public class Boulder : MonoBehaviour
     {
         if (other.gameObject.gameObject.tag == "Wall")
         {
-            Destroy(this.gameObject);
+            Instantiate(Resources.Load("Prefabs/SpellFX/Earth_Explode"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            Destroy(gameObject);
         }
         else if (other.gameObject.tag == "Enemy" && !isTriggered)
         {
-            DamageManager.spellBase = 35;
+            int tempInt = DamageManager.MagicDamage(other.gameObject, 80);
+            other.gameObject.GetComponent<Monster>().DamageMonster(tempInt);
+            Instantiate(Resources.Load("Prefabs/SpellFX/Earth_Explode"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
             isTriggered = true;
-            Destroy(this.gameObject);
+
+            Instantiate(Resources.Load("Prefabs/SpellFX/Stone_Small"), new Vector2(other.transform.position.x, other.transform.position.y), Quaternion.Euler(0, 0, transform.parent.eulerAngles.z));
+            Instantiate(Resources.Load("Prefabs/SpellFX/Stone_Small"), new Vector2(other.transform.position.x, other.transform.position.y), Quaternion.Euler(0, 0, transform.parent.eulerAngles.z + 15));
+            Instantiate(Resources.Load("Prefabs/SpellFX/Stone_Small"), new Vector2(other.transform.position.x, other.transform.position.y), Quaternion.Euler(0, 0, transform.parent.eulerAngles.z + 30));
+            Instantiate(Resources.Load("Prefabs/SpellFX/Stone_Small"), new Vector2(other.transform.position.x, other.transform.position.y), Quaternion.Euler(0, 0, transform.parent.eulerAngles.z - 15));
+            Instantiate(Resources.Load("Prefabs/SpellFX/Stone_Small"), new Vector2(other.transform.position.x, other.transform.position.y), Quaternion.Euler(0, 0, transform.parent.eulerAngles.z - 30));
+
+            Destroy(gameObject);
         }
     }
 }

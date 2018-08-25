@@ -23,24 +23,28 @@ public class FireBolt : MonoBehaviour
         fireBallAnim = GetComponent<Animator>();
         
         //Up
-        if (fireBallVelocity == new Vector2(0,3))
+        if (TestCharController.player.GetComponent<TestCharController>().north)
         {
             transform.eulerAngles = new Vector3(0, 0, 180);
+            fireballRB.velocity = new Vector2(0, 3);
         }
         //Left
-        else if(fireBallVelocity == new Vector2(-3,0))
+        else if(TestCharController.player.GetComponent<TestCharController>().west)
         {
             transform.eulerAngles = new Vector3(0, 0, -90);
+            fireballRB.velocity = new Vector2(-3, 0);
         }
         //Right
-        else if(fireBallVelocity == new Vector2(3,0))
+        else if(TestCharController.player.GetComponent<TestCharController>().east)
         {
             transform.eulerAngles = new Vector3(0, 0, 90);
+            fireballRB.velocity = new Vector2(3, 0);
         }
         //Down
-        else if (fireBallVelocity == new Vector2(0,-3))
+        else if (TestCharController.player.GetComponent<TestCharController>().south)
         {
             transform.eulerAngles = new Vector3(0, 0, 0);
+            fireballRB.velocity = new Vector2(0, -3);
         }
 
         fireBallAnim.Play("FireBolt");
@@ -49,21 +53,50 @@ public class FireBolt : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        fireballRB.velocity = fireBallVelocity;
+
 	}
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if(other.gameObject.gameObject.tag == "Wall")
         {
-            Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            int tempInt = Random.Range(1, 4);
+            switch (tempInt)
+            {
+                default:
+                    break;
+                case 1:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 2:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_B"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 3:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_C"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+            }
             Destroy(this.gameObject);
         }
         else if(other.gameObject.tag == "Enemy" && !isTriggered)
         {
-            DamageManager.spellBase = 25;
+            int tempInt = DamageManager.MagicDamage(other.gameObject, 50);
+            other.gameObject.GetComponent<Monster>().DamageMonster(tempInt);
             isTriggered = true;
-            Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            int tempInt2 = Random.Range(1, 4);
+            switch (tempInt2)
+            {
+                default:
+                    break;
+                case 1:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 2:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_B"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+                case 3:
+                    Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1_C"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                    break;
+            }
             Destroy(this.gameObject);
         }
     }

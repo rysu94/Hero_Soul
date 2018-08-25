@@ -28,7 +28,8 @@ public class FireBall : MonoBehaviour {
         }
         else if (other.gameObject.tag == "Enemy" && !isTriggered)
         {
-            DamageManager.spellBase = 25;
+            int tempInt = DamageManager.MagicDamage(other.gameObject, 55);
+            other.gameObject.GetComponent<Monster>().DamageMonster(tempInt);
             isTriggered = true;
             Instantiate(Resources.Load("Prefabs/SpellFX/Explode_1"), new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
             Destroy(this.gameObject);
