@@ -19,98 +19,34 @@ public class TestCharAnimation : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (!InventoryController.inInv && !TestCharController.inDialogue && !TestCharController.player.GetComponent<TestCharController>().isSliding)
+        if (!InventoryController.inInv && !TestCharController.inDialogue && !TestCharController.player.GetComponent<TestCharController>().isSliding && !TestCharController.isSwinging)
         {
-            if (Input.GetKey(KeyCode.W))
-            {
-                dir = "up";
-                if(!TestCharController.isSprinting)
-                {
-                    objectController.Play("TestUpWalk");
-                }
-                else if(TestCharController.isSprinting)
-                {
-                    objectController.Play("Sprint_Up");
-                }
-            }
-            else if (Input.GetKey(KeyCode.A))
-            {
-                dir = "left";
-                if(!TestCharController.isSprinting)
-                {
-                    objectController.Play("TestLeftWalk");
-                }
-                else if (TestCharController.isSprinting)
-                {
-                    objectController.Play("Sprint_Left");
-                }
-            }
-            else if (Input.GetKey(KeyCode.D))
-            {
-                dir = "right";
-                if(!TestCharController.isSprinting)
-                {
-                    objectController.Play("TestRightWalk");
-                }
-                if (TestCharController.isSprinting)
-                {
-                    objectController.Play("Sprint_Right");
-                }
-            }
-            else if (Input.GetKey(KeyCode.S))
-            {
-                dir = "down";
-                if(!TestCharController.isSprinting)
-                {
-                    objectController.Play("TestWalkDown");
-                }
-                if (TestCharController.isSprinting)
-                {
-                    objectController.Play("Sprint_Down");
-                }
-            }
-            else if (Input.GetKeyUp(KeyCode.W))
-            {
-                objectController.Play("TestUpIdle");
-                dir = "up";
-            }
-            else if (Input.GetKeyUp(KeyCode.A))
-            {
-                objectController.Play("TestLeftIdle");
-                dir = "left";
-            }
-            else if (Input.GetKeyUp(KeyCode.D))
-            {
-                objectController.Play("TestRightIdle");
-                dir = "right";
-            }
-            else if (Input.GetKeyUp(KeyCode.S))
-            {
-                objectController.Play("TestDownIdle");
-                dir = "down";
-            }
+            
+
 
         }
+        
         if (InventoryController.inInv)
         {
-            if (dir == "up")
+            if (TestCharController.player.GetComponent<TestCharController>().north)
             {
                 objectController.Play("TestUpIdle");
             }
-            else if (dir == "left")
+            else if (TestCharController.player.GetComponent<TestCharController>().west)
             {
                 objectController.Play("TestLeftIdle");
             }
-            else if (dir == "right")
+            else if (TestCharController.player.GetComponent<TestCharController>().east)
             {
                 objectController.Play("TestRightIdle");
             }
-            else if (dir == "down")
+            else if (TestCharController.player.GetComponent<TestCharController>().south)
             {
                 objectController.Play("TestDownIdle");
             }
 
         }
+        
 
     }
 }
