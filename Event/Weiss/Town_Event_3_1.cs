@@ -53,8 +53,8 @@ public class Town_Event_3_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Wow, I've never seen a monster so big.", "Cecilia/Cecilia Grey_thigh_2", "Cecilia", 1f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I may need to use some of my Arcana Cards on it.", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Wow, I've never seen a monster so big.", "Cecilia/Cecilia Grey_thigh_2", "NPC/NPC_None", "NPC/NPC_None", "Cecilia", 1f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I may need to use some of my Arcana Cards on it.", "Cecilia/Cecilia Grey_thigh_1", "NPC/NPC_None", "NPC/NPC_None", "Cecilia", 1f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)
         {

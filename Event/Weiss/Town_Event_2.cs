@@ -90,10 +90,10 @@ public class Town_Event_2 : MonoBehaviour
         dialogueIMG.SetActive(true);
 
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Help they're everywhere!", "NPC/NPC_None", "Villager", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Everyone please stay calm! The guard have this under control!", "NPC/NPC_None", "Guard", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Hmm, looks like something is happening in town. I should should probably see what's going on, even if I'm not an official member of the Guild yet.", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Oh, right but before that, I stored by gear in the stash here at the Inn. I should equip it before getting into trouble.", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Help they're everywhere!", "NPC/NPC_None", "NPC/NPC_None", "Cecilia/Cecilia Grey_thigh_1", "Villager", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Everyone please stay calm! The guard have this under control!", "NPC/NPC_None", "NPC/NPC_None", "Cecilia/Cecilia Grey_thigh_1", "Guard", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Hmm, looks like something is happening in town. I should should probably see what's going on, even if I'm not an official member of the Guild yet.", "NPC/NPC_None", "NPC/NPC_None", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Oh, right but before that, I stored by gear in the stash here at the Inn. I should equip it before getting into trouble.", "NPC/NPC_None", "NPC/NPC_None", "Cecilia/Cecilia Grey_thigh_1", "Cecilia", 1f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)

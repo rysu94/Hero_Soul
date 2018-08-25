@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class ArcanaDeck_Manager : MonoBehaviour
 {
-    public GameObject[] cardList = new GameObject[15];
+    //public List<GameObject> cardList = new List<GameObject>();
+    public bool init = false;
 
     public Text fire;
     public Text water;
@@ -16,31 +17,24 @@ public class ArcanaDeck_Manager : MonoBehaviour
     public GameObject spellbook;
     public AudioSource bookNoise;
 
+    public GameObject cardPanel;
+    public static List<GameObject> cardSlabList = new List<GameObject>();
 
 	// Use this for initialization
 	void Start ()
     {
-		
-	}
+        
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-		for(int i = 0; i < 15; i++)
+        if(!init)
         {
-            string cardName = Deck.playerDeck[i].cardName;
-            Text listText = cardList[i].GetComponent<Text>();
-            listText.text = cardName;
-            if(Deck.usedCards[i])
-            {
-                listText.color = Color.red;
-            }
-
-            cardList[i].GetComponent<CardSlot>().cardName = cardName;
-            cardList[i].GetComponent<CardSlot>().cardImage = Resources.Load<Sprite>("Cards/Arcana_" + cardName);
-            GetComponent<CardTooltipDatabase>().FindCardInfo(cardName, ref cardList[i].GetComponent<CardSlot>().cardElement, ref cardList[i].GetComponent<CardSlot>().cardDesc);
-
+            init = true;
+            UpdateCards();
         }
+        
 
         fire.text = InventoryManager.fireArcana.ToString();
         water.text = InventoryManager.waterArcana.ToString();
@@ -48,24 +42,31 @@ public class ArcanaDeck_Manager : MonoBehaviour
         wind.text = InventoryManager.windArcana.ToString();
         life.text = InventoryManager.lifeArcana.ToString();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            //raycast to see if its above an item slot
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            worldPoint.z = Camera.main.transform.position.z;
-            Ray ray = new Ray(worldPoint, new Vector3(0, 0, 1));
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+    }
 
-            if(hit.collider != null && hit.collider.gameObject.tag == "SpellBook")
-            {
-                bookNoise.Play();
-                spellbook.SetActive(true);
-                this.gameObject.SetActive(false);
-                InventoryController.inSpellbook = true;
-            }
+    public void UpdateCards()
+    {
+        foreach (GameObject card in GameObject.FindGameObjectsWithTag("Inv_Card"))
+        {
+            Destroy(card);
         }
 
+        cardSlabList.Clear();
+        for (int i = 0; i < Deck.deckSize; i++)
+        {
+            GameObject tempObj = Instantiate(Resources.Load("Prefabs/Card_Slab"), cardPanel.transform) as GameObject;
+            cardSlabList.Add(tempObj);
+            tempObj.transform.Find("Card_Name").GetComponent<Text>().text = Deck.playerDeck[i].cardName;
 
+            tempObj.GetComponent<CardSlot>().cardName = Deck.playerDeck[i].cardName;
+            tempObj.GetComponent<CardSlot>().cardImage = Resources.Load<Sprite>("Cards/Arcana_" + Deck.playerDeck[i].cardName);
 
+            if (Deck.usedCards[i])
+            {
+                tempObj.transform.Find("Card_Name").GetComponent<Text>().color = Color.red;
+            }
+            GetComponent<CardTooltipDatabase>().FindCardInfo(Deck.playerDeck[i].cardName , ref tempObj.GetComponent<CardSlot>().cardElement, ref tempObj.GetComponent<CardSlot>().cardDesc);
+
+        }
     }
 }

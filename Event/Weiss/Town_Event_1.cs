@@ -100,16 +100,16 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("", "NPC/NPC_None", "Meanwhile...", 1f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("What's going on here? Why is everyone gathered here?", "NPC/NPC_None", "Villager A", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("A performer just came into town. I think he's going to begin soon.", "NPC/NPC_None", "Villager B", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("A performance, huh? Sounds pretty interesting.", "NPC/NPC_None", "Villager C", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukukuku... Please bear with me ladies and gentlemen, the show will begin shortly.", "Count/Count Beaumont_thigh up", "???", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I wonder what he will perform?", "NPC/NPC_None", "Villager B", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("It has to be magic, just look at how he's dressed. Anyone dressed that well must be a magician!", "NPC/NPC_None", "Villager A", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku, I'm terribly sorry to say that I am no magician just a simple artist trying to get by, but rest assured I'm sure I'll be able to captivate you... Allow me to introduce myself, I am Count Beaumont, traveling artist.", "Count/Count Beaumont_thigh up", "???", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("An artist? Ha, how? I don't see any paint or a canvas?", "NPC/NPC_None", "Villager C", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku, allow me to show you...", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("", "NPC/NPC_None", "NPC/NPC_None", "NPC/NPC_None", "Meanwhile...", 1f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("What's going on here? Why is everyone gathered here?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("A performer just came into town. I think he's going to begin soon.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager B", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("A performance, huh? Sounds pretty interesting.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager C", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukukuku... Please bear with me ladies and gentlemen, the show will begin shortly.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "???", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("I wonder what he will perform?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager B", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("It has to be magic, just look at how he's dressed. Anyone dressed that well must be a magician!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku, I'm terribly sorry to say that I am no magician just a simple artist trying to get by, but rest assured I'm sure I'll be able to captivate you... Allow me to introduce myself, I am Count Beaumont, traveling artist.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "???", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("An artist? Ha, how? I don't see any paint or a canvas?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager C", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku, allow me to show you...", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
 
@@ -125,7 +125,7 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Eins! Drais! Come out show our audience your beauty!", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Eins! Drais! Come out show our audience your beauty!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)
@@ -146,11 +146,11 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("W-what are those?", "NPC/NPC_None", "Villager A", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Those are.. D-demons!", "NPC/NPC_None", "Villager B", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("B-but how?! They were all supposed to be killed ten years ago!", "NPC/NPC_None", "Villager B", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Yes... Yes! This atmosphere! This tension! MARVELOUS! SPECTACULAR! This is my art! Kukuku!", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Run!", "NPC/NPC_None", "Villager A", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("W-what are those?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Those are.. D-demons!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager B", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("B-but how?! They were all supposed to be killed ten years ago!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager B", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Yes... Yes! This atmosphere! This tension! MARVELOUS! SPECTACULAR! This is my art! Kukuku!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Run!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
         
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
@@ -181,7 +181,7 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Tsk, tsk. We can't have you doing that, we haven't even got to the main event.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Tsk, tsk. We can't have you doing that, we haven't even got to the main event.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)
@@ -210,10 +210,10 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("My body... W-what have you done?", "NPC/NPC_None", "Villager A", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku... What good is an artist if they can't hold an audience?", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Y-you Bastard, you won't get away with this. The guard...", "NPC/NPC_None", "Villager B", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("♥Ahhh♥ Your anger, your fear, such raw emotion... MAGNIFICENT! Remember this feeling as your curtain falls.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("My body... W-what have you done?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Kukuku... What good is an artist if they can't hold an audience?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Y-you Bastard, you won't get away with this. The guard...", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager B", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("♥Ahhh♥ Your anger, your fear, such raw emotion... MAGNIFICENT! Remember this feeling as your curtain falls.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)
@@ -252,9 +252,9 @@ public class Town_Event_1 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Arrrrgh!", "NPC/NPC_None", "Villagers", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Y-you're a monster! Just what are you?", "NPC/NPC_None", "Villager A", 0.9f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Hmmm, still alive? What am I? I told you I am just a simple artist. Kukuku.", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Arrrrgh!", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villagers", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Y-you're a monster! Just what are you?", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Villager A", 0.9f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Hmmm, still alive? What am I? I told you I am just a simple artist. Kukuku.", "NPC/NPC_None", "NPC/NPC_None", "Count/Count Beaumont_thigh up", "Count Beaumont", 0.9f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)

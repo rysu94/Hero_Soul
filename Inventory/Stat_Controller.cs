@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcanaDeck_Controller : MonoBehaviour
+public class Stat_Controller : MonoBehaviour
 {
     public AudioSource click;
 
@@ -10,7 +10,7 @@ public class ArcanaDeck_Controller : MonoBehaviour
     void Start ()
     {
         click = GetComponent<AudioSource>();
-	}
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -20,54 +20,54 @@ public class ArcanaDeck_Controller : MonoBehaviour
         Ray ray = new Ray(worldPoint, new Vector3(0, 0, 1));
         RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
 
-        if(hit.collider != null && hit.collider.tag == "Deck_Tab")
+        if(hit.collider != null && hit.collider.tag == "Skill_Tab")
         {
-            if (Input.GetMouseButtonDown(0) && InventoryController.deckToggle && !InventoryController.inSpellbook)
+            if (Input.GetMouseButtonDown(0) && InventoryController.statToggle && !InventoryController.inSpellbook)
             {
                 click.Play();
-                InventoryController.deck.gameObject.SetActive(false);
+                InventoryController.stats.gameObject.SetActive(false);
                 Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inventory");
                 InventoryController.invImage.sprite = tempSprite;
-                InventoryController.deckToggle = false;
+                InventoryController.statToggle = false;
             }
 
-            else if (Input.GetMouseButtonDown(0) && !InventoryController.deckToggle && !InventoryController.inSpellbook)
+            else if (Input.GetMouseButtonDown(0) && !InventoryController.statToggle && !InventoryController.inSpellbook)
             {
-                InventoryController.deck.gameObject.SetActive(true);
+                InventoryController.stats.gameObject.SetActive(true);
                 click.Play();
-                Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inv_3");
+                Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inv_4");
                 InventoryController.invImage.sprite = tempSprite;
-                InventoryController.deckToggle = true;
+                InventoryController.statToggle = true;
                 InventoryController.equipToggle = false;
                 InventoryController.equip.gameObject.SetActive(false);
-                InventoryController.statToggle = false;
-                InventoryController.stats.gameObject.SetActive(false);
+                InventoryController.deckToggle = false;
+                InventoryController.deck.gameObject.SetActive(false);
             }
         }
 
-        if(InputManager.J_DPadVertical() > 0 && InventoryController.deckToggle && !InventoryController.invHUDMade && !InventoryController.padActive)
+        if(InputManager.J_DPadHorizontal() > 0 && InventoryController.statToggle && !InventoryController.invHUDMade && !InventoryController.padActive)
         {
             click.Play();
-            InventoryController.deck.gameObject.SetActive(false);
+            InventoryController.stats.gameObject.SetActive(false);
             Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inventory");
             InventoryController.invImage.sprite = tempSprite;
-            InventoryController.deckToggle = false;
+            InventoryController.statToggle = false;
             InventoryController.selectTab = 0;
             InventoryController.padX = 0;
             InventoryController.padActive = true;
             StartCoroutine(InputBuffer());
         }
-        else if(InputManager.J_DPadVertical() > 0 && !InventoryController.deckToggle && !InventoryController.invHUDMade && !InventoryController.padActive)
+        else if(InputManager.J_DPadHorizontal() > 0 && !InventoryController.statToggle && !InventoryController.invHUDMade && !InventoryController.padActive)
         {
-            InventoryController.deck.gameObject.SetActive(true);
+            InventoryController.stats.gameObject.SetActive(true);
             click.Play();
-            Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inv_3");
+            Sprite tempSprite = Resources.Load<Sprite>("Inventory/Inv_4");
             InventoryController.invImage.sprite = tempSprite;
-            InventoryController.deckToggle = true;
+            InventoryController.statToggle = true;
             InventoryController.equipToggle = false;
             InventoryController.equip.gameObject.SetActive(false);
-            InventoryController.statToggle = false;
-            InventoryController.stats.gameObject.SetActive(false);
+            InventoryController.deckToggle = false;
+            InventoryController.deck.gameObject.SetActive(false);
             InventoryController.selectTab = 0;
             InventoryController.padX = 0;
             InventoryController.padActive = true;

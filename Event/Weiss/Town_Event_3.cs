@@ -81,8 +81,8 @@ public class Town_Event_3 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Monsters? No way, how did monsters get into town?", "Cecilia/Cecilia Grey_thigh_2", "Cecilia", 1f));
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("No time for that, got to get rid of them!", "Cecilia/Cecilia Grey_thigh_3", "Cecilia", 1f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Monsters? No way, how did monsters get into town?", "Cecilia/Cecilia Grey_thigh_1", "NPC/NPC_None", "NPC/NPC_None", "Cecilia", 1f, -1));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("No time for that, got to get rid of them!", "Cecilia/Cecilia Grey_thigh_3", "NPC/NPC_None", "NPC/NPC_None", "Cecilia", 1f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)
         {

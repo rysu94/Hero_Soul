@@ -81,7 +81,7 @@ public class Town_Event_4 : MonoBehaviour
         dialogueController.SetActive(true);
         dialogueIMG.SetActive(true);
         dialogueController.GetComponent<DialogueController>().Clear();
-        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Sounds like something is going on in the town square. I should go check it out.", "Cecilia/Cecilia Grey_thigh_2", "Cecilia", 1f));
+        dialogueController.GetComponent<DialogueController>().dialogueList.Add(new Dialogue("Sounds like something is going on in the town square. I should go check it out.", "Cecilia/Cecilia Grey_thigh_2", "NPC/NPC_None", "NPC/NPC_None", "Cecilia", 1f, -1));
         dialogueController.GetComponent<DialogueController>().StartDialogue();
 
         while (!dialogueController.GetComponent<DialogueController>().dialogueDone)

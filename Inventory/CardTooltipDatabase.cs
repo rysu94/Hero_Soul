@@ -24,8 +24,8 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Blaze")
         {
-            element = "Projectile, Persistant";
-            desc = "Shoot a large fire that explodes into smaller embers when contacting an enemy or wall. Explodes after a few seconds otherwise.";
+            element = "Projectile";
+            desc = "Shoot a large fire that explodes into smaller embers when contacting an enemy or wall. Exploding after a few seconds otherwise.";
         }
         else if (cardName == "Enfire")
         {
@@ -34,23 +34,23 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Fire Spin")
         {
-            element = "Projectile, Persistant";
-            desc = "Conjure a whirlwind of flame which slowly advances forward, periodically creating fireballs.";
+            element = "Projectile";
+            desc = "Conjure a whirlwind of flame which slowly advances forward damaging anything that touches it and periodically creating fireballs.";
         }
-        else if (cardName == "Flame Lash")
+        else if (cardName == "Flame Wave")
         {
-            element = "Conal";
-            desc = "Create a whip of flame which sweeps in a wide arc in front of you.";
+            element = "Projectile";
+            desc = "Create a wave of flame which sweeps in an arc in front of you.";
         }
         else if (cardName == "Magma")
         {
             element = "Projectile";
-            desc = "Hurl a piece of molten earth which grows larger as it travels and dealing more damage.";
+            desc = "Hurl a piece of molten earth which grows larger as it travels, dealing more damage and leaving a pool of lava which damages any enemy standing in it.";
         }
         else if (cardName == "Molten")
         {
-            element = "Instant";
-            desc = "The ground beneath the first enemy you are facing erupts dealing massive damage and creating blazes.";
+            element = "All";
+            desc = "Cause the skies to rain down fiery destruction, creating meteors that strike the enemy.";
         }
 
         //====================================================================
@@ -60,12 +60,12 @@ public class CardTooltipDatabase : MonoBehaviour
         else if (cardName == "Boulder")
         {
             element = "Projectile";
-            desc = "Conjure a large boulder that deals moderate damage to the first enemy hit.";
+            desc = "Conjure a large boulder that deals moderate damage to the first enemy hit, then splinters into smaller shards behind the enemy.";
         }
         else if (cardName == "Earthen")
         {
             element = "Buff";
-            desc = "Create an earthen barrier that surrounds you, blocking 3 projectiles before expiring.";
+            desc = "Create an earthen barrier that surrounds you for the duration of the room, blocking 5 projectiles before expiring.";
         }
         else if (cardName == "Enstone")
         {
@@ -74,27 +74,27 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Impale")
         {
-            element = "Instant";
-            desc = "Create a earthen spire under the first enemy you are facing.";
+            element = "Target";
+            desc = "Create earthen spires at the location of the mouse cursor, which radiate outward dealing moderate damage.";
         }
         else if (cardName == "Quake")
         {
-            element = "Projectile, Persistant";
+            element = "All";
             desc = "Sunder the earth, periodically creating boulders and stones.";
         }
         else if (cardName == "Rupture")
         {
-            element = "Instant";
-            desc = "Summon an earthen pillar under the first enemy you are facing, knocking them towards you.";
+            element = "Target";
+            desc = "Summon earthen spikes that follow your mouse cursor, periodically launching towards the cursor dealing damage.";
         }
         else if (cardName == "Stone")
         {
             element = "Projectile";
-            desc = "Hurl a small stone at an enemy.";
+            desc = "Hurl a small stone at an enemy dealing moderate damage.";
         }
         else if (cardName == "Wall")
         {
-            element = "Persistant";
+            element = "Projectile";
             desc = "Erect a wall of earth blocking damage. Wall will expire over time or if it blocks enough damage.";
         }
 
@@ -109,13 +109,13 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Icicle")
         {
-            element = "Projectile";
-            desc = "Conjure a sharp shard of ice that deals moderate damage to the first enemy hit.";
+            element = "Target";
+            desc = "Conjure a sharp shard of ice at the location of your mouse cursor, that deals moderate damage.";
         }
         else if (cardName == "Entomb")
         {
-            element = "Projectile, Persistant";
-            desc = "Launch an icy porjectile which freezes the first target hit for 3 seconds.";
+            element = "Projectile";
+            desc = "Launch an icy porjectile which freezes the first target hit for 10 seconds. Cannot freeze bosses.";
         }
         else if (cardName == "Enwater")
         {
@@ -124,23 +124,23 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Shatter")
         {
-            element = "Instant";
-            desc = "Create a jagged pillar of ice under the first target you are facing dealing damage.";
+            element = "Projectile";
+            desc = "Create a line of jagged pillars of ice towards the mouse cursor, which deals modeate damage.";
         }
         else if (cardName == "Spout")
         {
-            element = "Instant, Persistant";
-            desc = "Create a large water spout under the first enemy you are facing, periodically creating bubbles.";
+            element = "Target";
+            desc = "Create a large water spout at the mouse cursor, periodically creating bubbles.";
         }
         else if (cardName == "Tidal")
         {
-            element = "Projectile";
-            desc = "Summon a large wave of water that deals damage to all enemies.";
+            element = "All";
+            desc = "Summon a large waves of water that deals damage to all enemies.";
         }
         else if (cardName == "Water")
         {
-            element = "Instant";
-            desc = "Strike an enemy with high pressure water dealing moderate damage.";
+            element = "Projectile";
+            desc = "Strike all enemies in a line in front of you with high pressured water dealing moderate damage and knocking back.";
         }
 
         //====================================================================
@@ -154,8 +154,8 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Bloom")
         {
-            element = "Conal";
-            desc = "Douse a large conal area in front of you with life arcana creating a rampant growth of plants damaging enemies.";
+            element = "Buff";
+            desc = "Remove all negative debuffs on you.";
         }
         else if (cardName == "Enliven")
         {
@@ -164,28 +164,28 @@ public class CardTooltipDatabase : MonoBehaviour
         }
         else if (cardName == "Entangle")
         {
-            element = "Instant, Persistant";
-            desc = "Tangle the first enemy you are facing slowing them and dealing damage over time.";
+            element = "Projectile";
+            desc = "Launch a seed that rapidly grows on the first enemy hit, dealing damage over time.";
         }
         else if (cardName == "Guardian")
         {
-            element = "Persistant";
-            desc = "Summon a guardian to fight for you for 10 seconds.";
+            element = "Buff";
+            desc = "For the duration of the room or 60 seconds, summon as guardian to attack the closest enemy to you for modeate damage.";
         }
         else if (cardName == "Heal")
         {
             element = "Buff";
-            desc = "Use to slightly heal yourself.";
+            desc = "Use to heal yourself for 150 health.";
         }
         else if (cardName == "Mend")
         {
             element = "Buff";
-            desc = "Use to heal yourself.";
+            desc = "Use to slightly heal yourself for 50 health.";
         }
         else if (cardName == "Venom")
         {
             element = "Projectile";
-            desc = "Hurl a concentrated ball of poison dealing damage and has a chance to poison.";
+            desc = "Hurl concentrated balls of poison dealing damage and has a chance to poison.";
         }
 
         //====================================================================
@@ -194,43 +194,43 @@ public class CardTooltipDatabase : MonoBehaviour
 
         else if (cardName == "Zap")
         {
-            element = "Instant";
-            desc = "Conjure a bolt of lightning to strike the first enemy you are facing.";
+            element = "Target";
+            desc = "Conjure a bolt of lightning that strikes the location of your mouse cursor dealing moderate damage.";
         }
         else if (cardName == "Twister")
         {
-            element = "Projectile, Persistant";
-            desc = "Create a violent twister which random moves damaging enemies that touch it.";
+            element = "Projectile";
+            desc = "Create a violent twister which slowly moves and damaging enemies that touch it.";
         }
-        else if (cardName == "Ball Lightning")
+        else if (cardName == "Ball")
         {
             element = "Projectile";
-            desc = "Create a slow moving ball of lightning that spits if it hits an enemy.";
+            desc = "Create a slow moving ball of lightning that follows the mouse cursor. The further the ball travels, the larger and more damage it deals.";
         }
-        else if (cardName == "Razor Wind")
+        else if (cardName == "Razor")
         {
-            element = "Conal";
-            desc = "Whip up cuttin winds in a cone in from of you damaging any enemies in it.";
+            element = "Projectile";
+            desc = "Whip up cutting winds in a cone in front of you damaging any enemies you are facing.";
         }
         else if(cardName == "Aero")
         {
             element = "Buff";
-            desc = "Imbue yourself with the embodiment of wind increasing movement speed for 30 seconds.";
+            desc = "Imbue yourself with the embodiment of wind increasing movement speed for 15 seconds.";
         }
         else if(cardName == "Gust")
         {
             element = "Projectile";
-            desc = "Create a pressurized ball of air that damages the first enemy hit.";
+            desc = "Create a pressurized cone of air that damages all enemies in front of you and knocking them back.";
         }
         else if(cardName == "Storm")
         {
-            element = "Persistant";
-            desc = "Whip up a violent storm that periodically creates twisters.";
+            element = "Buff";
+            desc = "Whip up a violent storm that rotates around you dealing damage to any enemy hit. Lasts 25 seconds.";
         }
         else if(cardName == "Tempest")
         {
-            element = "Persistant";
-            desc = "Create a violent electrical storm which zaps random enemies.";
+            element = "Target";
+            desc = "Create a violent electrical storm which constantly Zaps the location of your mouse cursor for 10 seconds.";
         }
     }
 }
