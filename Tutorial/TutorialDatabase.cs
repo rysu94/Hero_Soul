@@ -4,6 +4,32 @@ using UnityEngine;
 
 public class TutorialDatabase : MonoBehaviour
 {
+    //Training 1 Basic Movement
+    public static bool tut1 = false;
+
+    //Training 2 Equip Weapon
+    public static bool tut2 = false;
+    public static bool tut2_A = false;
+    public static bool tut3 = false;
+    public static bool tut3_A = false;
+
+    //Training 2 Attack Tutorial
+    public static bool tut4 = false;
+
+    //Training 2 DeckBuilding Tutorial
+    public static bool tut5 = false;
+    public static bool tut6 = false;
+    public static bool tut7 = false;
+
+    //Training 2 Arcana
+    public static bool tut8 = false;
+    public static bool tut9 = false;
+
+    //Training 3 Dodge
+    public static bool tut10 = false;
+
+
+
     /*
     1. Player stash
     2. Inn Bed

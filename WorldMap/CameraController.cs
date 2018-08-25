@@ -26,6 +26,7 @@ public class CameraController : MonoBehaviour
         {
             camera.transform.Translate(Vector2.right * .0125f);
         }
+        /*
         else if (Input.GetKey(KeyCode.W) && camera.transform.position.y < 1.92f && !lockCamera)
         {
             camera.transform.Translate(Vector2.up * .0125f);
@@ -34,5 +35,6 @@ public class CameraController : MonoBehaviour
         {
             camera.transform.Translate(Vector2.down * .0125f);
         }
+        */
     }
 }

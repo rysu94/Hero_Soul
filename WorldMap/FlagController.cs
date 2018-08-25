@@ -14,9 +14,11 @@ public class FlagController : MonoBehaviour
 
     //Koros Forest
     public GameObject korosFlag;
-    public static bool korosClear = false; 
+    public static bool korosClear = false;
 
-
+    //Mier Mines
+    public GameObject mierFlag;
+    public static bool mierClear = false;
 
 
 
@@ -30,7 +32,7 @@ public class FlagController : MonoBehaviour
 		if(korosClear)
         {
             korosFlag.GetComponent<SpriteRenderer>().sprite = clearFlag;
-            korosFlag.GetComponent<Animator>().Play("Flag_Idle");
+            //korosFlag.GetComponent<Animator>().Play("Flag_Idle");
         }
 	}
 	

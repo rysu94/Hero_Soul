@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
-public class ForestOfBeginning : MonoBehaviour
+public class GalahadTomb : MonoBehaviour
 {
 
     public GameObject arrow;
     public AudioSource selectNoise;
-    public AudioClip forestBGM;
+    public AudioClip townBGM;
     public GameObject anchor;
-    public GameObject forestAnchor;
+
+    public GameObject weissAnchor;
 
     public Sprite loadSprite;
 
@@ -32,7 +33,7 @@ public class ForestOfBeginning : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isOver)
+        if (isOver)
         {
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             worldPoint.z = Camera.main.transform.position.z;
@@ -50,24 +51,27 @@ public class ForestOfBeginning : MonoBehaviour
                     CameraController.lockCamera = false;
                     enterButton.onClick.RemoveListener(EnterScene);
                 }
+
             }
 
+
         }
+
     }
 
     void OnMouseOver()
     {
         if (!isOver && Input.GetMouseButtonDown(0) && !CameraController.lockCamera)
         {
-            StartCoroutine(ClickBuffer());
-            arrow.transform.position = forestAnchor.transform.position;
+            arrow.transform.position = weissAnchor.transform.position;
             selectNoise.Play();
             info.gameObject.SetActive(true);
             info.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z + 5));
-            info.transform.position = new Vector3(info.transform.position.x + 1.15f, info.transform.position.y, info.transform.position.z);
-            infoText.text = "Koros Forest";
-            inforDesc.text = "The Koros forest is small forest on the road to the Alterian Capital. Though it is small, many people still go missing traversing it.";
+            info.transform.position = new Vector3(info.transform.position.x + 1.15f, info.transform.position.y - .35f, info.transform.position.z);
+            infoText.text = "Galahad's Tomb";
+            inforDesc.text = "The lost and forgotton tomb of the great Galahad.";
             CameraController.lockCamera = true;
+            StartCoroutine(ClickBuffer());
             enterButton.onClick.AddListener(EnterScene);
         }
     }
@@ -80,10 +84,10 @@ public class ForestOfBeginning : MonoBehaviour
 
     void EnterScene()
     {
-        SceneLoader.loadedScene = "Forest_1_Start";
+        SceneLoader.loadedScene = "Tomb_1_Start";
+        SceneLoader.loadedBGM = townBGM;
         SceneLoader.loadSprite = loadSprite;
-        SceneLoader.loadedBGM = forestBGM;
-        GameObject.Find("BGM").GetComponent<AudioSource>().clip = forestBGM;
+        GameObject.Find("BGM").GetComponent<AudioSource>().clip = townBGM;
         GameObject.Find("BGM").GetComponent<AudioSource>().Play();
         SceneManager.LoadScene("LoadScreen");
 
@@ -92,5 +96,6 @@ public class ForestOfBeginning : MonoBehaviour
         LevelCreator.playerStartY = -1.3f;
         LevelCreator.startTag = "Up";
         CameraController.lockCamera = false;
+
     }
 }

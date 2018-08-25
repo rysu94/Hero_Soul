@@ -4,14 +4,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class ForestOfBeginning : MonoBehaviour
+public class MierMines : MonoBehaviour
 {
 
     public GameObject arrow;
     public AudioSource selectNoise;
-    public AudioClip forestBGM;
+    public AudioClip mierBGM;
     public GameObject anchor;
-    public GameObject forestAnchor;
+    public GameObject mierAnchor;
 
     public Sprite loadSprite;
 
@@ -24,15 +24,15 @@ public class ForestOfBeginning : MonoBehaviour
     public Button enterButton;
 
     // Use this for initialization
-    void Start()
+    void Start ()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
+		
+	}
+	
+	// Update is called once per frame
+	void Update ()
     {
-        if(isOver)
+        if (isOver)
         {
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             worldPoint.z = Camera.main.transform.position.z;
@@ -60,13 +60,13 @@ public class ForestOfBeginning : MonoBehaviour
         if (!isOver && Input.GetMouseButtonDown(0) && !CameraController.lockCamera)
         {
             StartCoroutine(ClickBuffer());
-            arrow.transform.position = forestAnchor.transform.position;
+            arrow.transform.position = mierAnchor.transform.position;
             selectNoise.Play();
             info.gameObject.SetActive(true);
             info.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z + 5));
-            info.transform.position = new Vector3(info.transform.position.x + 1.15f, info.transform.position.y, info.transform.position.z);
-            infoText.text = "Koros Forest";
-            inforDesc.text = "The Koros forest is small forest on the road to the Alterian Capital. Though it is small, many people still go missing traversing it.";
+            info.transform.position = new Vector3(info.transform.position.x - 1.15f, info.transform.position.y, info.transform.position.z);
+            infoText.text = "Mier Mines";
+            inforDesc.text = "The now abandoned Mier Mines used to mine most of the Arcana for the Alterian Empire. It is now inhabited by a myriad of monsters.";
             CameraController.lockCamera = true;
             enterButton.onClick.AddListener(EnterScene);
         }
@@ -80,10 +80,10 @@ public class ForestOfBeginning : MonoBehaviour
 
     void EnterScene()
     {
-        SceneLoader.loadedScene = "Forest_1_Start";
+        SceneLoader.loadedScene = "Cave_1_Start";
         SceneLoader.loadSprite = loadSprite;
-        SceneLoader.loadedBGM = forestBGM;
-        GameObject.Find("BGM").GetComponent<AudioSource>().clip = forestBGM;
+        SceneLoader.loadedBGM = mierBGM;
+        GameObject.Find("BGM").GetComponent<AudioSource>().clip = mierBGM;
         GameObject.Find("BGM").GetComponent<AudioSource>().Play();
         SceneManager.LoadScene("LoadScreen");
 
@@ -93,4 +93,5 @@ public class ForestOfBeginning : MonoBehaviour
         LevelCreator.startTag = "Up";
         CameraController.lockCamera = false;
     }
+
 }
